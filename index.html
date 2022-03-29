@@ -1,0 +1,86 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Graphs</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <script src="https://kit.fontawesome.com/38a84518ea.js" crossorigin="anonymous"></script> 
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="script.js"></script>
+</head>
+<body>
+    <div id="grid">
+        <div id="r1" class="row">
+            <div id="1_1" class="nvisit" value='1' onclick="add_type(this)">
+            </div>
+        </div>
+    </div>
+    <div id="settings" class="active" onclick="toggle_sidebar(this)">Settings</div>
+    <div id ="sidebar" class="active">
+        <h3 id="algo_title">Breadth First Search</h3>
+        <div id="select_grid">
+            <p>Select Grid Size:<br><input onchange = "grid_size()" id ="xgrid" value="20" max="100" min="1" type="number" class = "grid">X<input id ="ygrid" onchange = "grid_size()" value="20" type="number" max="100" min="1" class = "grid"></p>
+        </div>
+        <div id="select_algo">
+            <p>Select Algorithm:<br></p>
+            <select name="" id="" onchange="algo(this)">
+                <option value="bfs">Breadth First Search</option>
+                <option value="dfs">Depth First Search</option>
+                <option value="dji">Dhikstra Algorithm</option>
+                <option value="dji2">Bi-Directional Dhikstra Algorithm</option>
+                <option value="astar">A* Algorithm</option>
+                <option value="best_algo">Auto Detect Best Algorithm</option>
+            </select>
+        </div>
+        <div id="select_type">
+            <p>Select Grid Type:<br></p>
+            <div id="type">
+                <i class="fa-solid fa-house start" id="start" onclick="select_type(this)"></i>
+                <i class="fa-solid fa-circle-minus stop" id="stop_sign" onclick="select_type(this)"></i>
+                <i class="fa-solid fa-tree slow" id="slow" onclick="select_type(this)"></i>
+                <i class="fa-solid fa-location-pin location" id="location" onclick="select_type(this)"></i>
+                <i class="fa-solid fa-road merge" id="merge" onclick="select_type(this)"></i>
+            </div>     
+        </div>
+        <div id="visual_toggle">
+            <p>Do you want the Algorithm to be Visual?</p>
+            <label class="switch">
+                <input onclick="speed_instant(this)" type="checkbox">
+                <span class="slider round"></span>
+              </label>
+              <label class="speed">
+                  <input oninput="speed_change(this)" type ="range" id="speed" min="5" max="200" value="20">
+                  <p id="speed_val">20ms</p>
+              </label>
+              
+        </div>
+        <div id="grid_length">
+            <p> Blank Grid Length:<input oninput="length_change(this)" id = "blank_l" type="number" value="2" min="0"> </p><br>
+            <p> Road Grid Length: <input oninput="length_change(this)" id = "road_l" type="number" value="0.5" min="0"></p><br>
+            <p> Forest Grid Length:<input oninput="length_change(this)" id = "forest_l" type="number" value="10" min="0"> </p><br>
+        </div>
+        <div id = "buttons">
+            <button onclick="choose_algo('bfs')" class="run-button">Run</button>
+            <button class="reset-button" onclick="reset()">Reset</button>
+            <button class="clear-button" onclick="clear_()">Clear</button>
+
+
+        </div>
+        <div id="stats">
+            <h5>Stats:<br></h5>
+            <p>Number of locations visited: <p id="stat_visit"> 0</p> visited </p>
+            <p>Distance of Paths found: <p id="stat_dist"> 0</p> Nodes </p>
+            <p>Time taken to compute: <p id="stat_time"> 0</p> ms </p>
+        </div>
+
+    </div>
+</body>
+<footer>
+    <script>
+        grid_size()
+    </script>
+</footer>
