@@ -61,6 +61,10 @@ function reset(){
     let v = qsa('.visit');
     let p = qsa('.path');
     let r = qsa('.relax');
+    let db = qsa('.value_box');
+    db.forEach(value=>{
+        value.className = 'value_box';
+    })
     r.forEach(block=>{
         if(block.classList.contains('fa-solid')){
             block.classList.remove('relax')
@@ -99,10 +103,16 @@ function speed_instant(checkbox){
 
 
 function clear_(){
-    removeAllChildNodes(did('grid'));
-    grid_size()
-    start=''
-    location_=[]
+    if(did("grid")!=null){
+        removeAllChildNodes(did('grid'));
+        grid_size()
+        start=''
+        location_=[]
+    }
+    else if(did('data')!=null){
+        removeAllChildNodes(did('data'))
+    }
+
 }
 
 function speed_change(bar){
@@ -973,8 +983,97 @@ function bidjis(s,r,visited,algo){
     visited = reconstruct_path(parent,pqid,s,visited)
 
     return visited;
+}
 
 
 
 
+
+/*
+* This section houses all the sorting related Algoriths
+*/
+function isNumeric(val){
+    if(parseInt(val)!=val){
+        return false;
+    }
+    else{
+        return true
+    }
+}
+
+function draw_to_viewport(value_array,max){
+    let view_port = did("data");
+    removeAllChildNodes(view_port);
+    for(let i=0;i<value_array.length;i++){
+        let histo = create_histo(max,value_array[i],value_array.length)
+        view_port.appendChild(histo);
+    }
+}
+function randomnize_sort(){
+    let quantity = parseInt(did("n_nodes").value);
+    let low = parseInt(did("range_low").value);
+    let high = parseInt(did("range_high").value);
+    let array_val = Array();
+    let input;
+    max=10;
+    for (let i=0;i<quantity;i++){
+        let value = Math.floor(Math.random()*(high-low)+low)
+        if(i==0){
+            input=value.toString()
+        }
+        else{
+            input=input+","+value.toString()
+        }
+        if(value>max){
+            max=value;
+        }
+        console.log(value)
+        array_val.push(value)
+    }
+    draw_to_viewport(array_val,max);
+    did('sort_values').value = input;
+
+}
+
+function create_histo(max_value,c_value,quantity){
+    let height = c_value/max_value*600
+    let width = 1350/quantity;
+    if(width>25){
+        width = 25
+    }
+    let histo = document.createElement('div');
+    histo.setAttribute('style',"width:"+width+"px; height:"+height+"px")
+    histo.setAttribute('class','value_box');
+
+    return histo;
+}
+function visualize_sort(){
+    let input = did('sort_values').value;
+    if(input[(input.length-1)]==","){
+        return
+    }
+    values = input.split(',');
+    console.log(values)
+    let value;
+    let array_val = Array();
+    max=0;
+    for(let i=0;i<values.length;i++){
+        value=values[i];
+        if(!isNumeric(value)){
+            alert("Invalid Input Detected");
+            return
+        }
+        value = parseInt(value);
+        if (value>max){
+            max=value;
+        }
+        array_val.push(value);
+        }
+    
+    let view_port = did("data");
+    removeAllChildNodes(view_port);
+    for(let i=0;i<array_val.length;i++){
+        let histo = create_histo(max,array_val[i],array_val.length)
+        view_port.appendChild(histo);
+    }
 }

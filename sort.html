@@ -1,0 +1,72 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Graphs</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <script src="https://kit.fontawesome.com/38a84518ea.js" crossorigin="anonymous"></script> 
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="script.js"></script>
+</head>
+<body>
+    <div id="data">
+    </div>
+    <div id="settings" class="active" onclick="toggle_sidebar(this)">Settings</div>
+    <div id ="sidebar" class="active">
+        <h3 id="algo_title">Breadth First Search</h3>
+        <div id="random_vals">
+            <p>Randomnize Inputs:<br>
+                Quantity: <input  id ="n_nodes" placeholder="50" type="number" class = "random">
+                Range: <input id="range_low" placeholder="10" type="number" class = "random"> - <input id="range_high" placeholder="50" type="number" class = "random"></p>
+                <button class="run-button" onclick="randomnize_sort()">Randomnize</button>
+        </div>
+        <div id="select_algo">
+            <p>Select Algorithm:<br></p>
+            <select name="" id="" onchange="algo(this)">
+                <option value="qs">Quick Sort</option>
+                <option value="hp">Heap Sort</option>
+                <option value="is">Insertion Sort</option>
+                <option value="cs">Counting Sort</option>
+                <option value="bs">Bubble Sort</option>
+            </select>
+        </div>
+        <div id="input_values">
+            <p>Input values to be sorted separated by a comma (Example: 2,5,8):<br></p>
+            <div id="values">
+                <textarea type="text" id="sort_values" class="text_box" placeholder="1,5,8,7,6" oninput="visualize_sort()"></textarea>
+            </div>     
+        </div>
+        <div id="visual_toggle">
+            <p>Do you want the Algorithm to be Visual?</p>
+            <label class="switch">
+                <input onclick="speed_instant(this)" type="checkbox">
+                <span class="slider round"></span>
+              </label>
+              <label class="speed">
+                  <input oninput="speed_change(this)" type ="range" id="speed" min="5" max="200" value="20">
+                  <p id="speed_val">20ms</p>
+              </label>
+              
+        </div>
+        <div id = "buttons">
+            <button onclick="choose_algo('bfs')" class="run-button">Run</button>
+            <button class="reset-button" onclick="reset()">Reset</button>
+            <button class="clear-button" onclick="clear_()">Clear</button>
+
+
+        </div>
+        <div id="stats">
+            <h5>Stats:<br></h5>
+            <p>Number of locations visited: <p id="stat_visit"> 0</p> visited </p>
+            <p>Distance of Paths found: <p id="stat_dist"> 0</p> Nodes </p>
+            <p>Time taken to compute: <p id="stat_time"> 0</p> ms </p>
+        </div>
+
+    </div>
+</body>
+<footer>
+</footer>
