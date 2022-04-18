@@ -1002,6 +1002,29 @@ function bidjis(s,r,visited,algo){
 * This section houses all the sorting related Algoriths
 */
 
+function choose_sort(sort){
+    ///Reset ViewPort to Standard////
+    let data = did('data').cloneNode(true);
+    removeAllChildNodes(did('view_port'))
+    did('view_port').appendChild(data)
+    if(sort.value=='qs'){
+        did('buttons').children[0].setAttribute('onclick','qsort_start()');
+    }
+    else if(sort.value=='cs'){
+        did('buttons').children[0].setAttribute('onclick','count_sort()');
+        let count_view = document.createElement('div');
+        count_view.id = "count-view"
+        let max_val = document.createElement('h3');
+        max_val.innerHTML = "Max Value: ";
+        let array = document.createElement('div');
+        array.id = 'count_array';
+        count_view.appendChild(max_val);
+        count_view.appendChild(array)
+        did('view_port').appendChild(count_view)
+    }
+    
+}
+
 function animate_sort(action_array,start){
     /*
     * Activate Value = a_val, ex. a_1
@@ -1010,6 +1033,11 @@ function animate_sort(action_array,start){
     * Deactivate Values = d_val, ex. d_1
     * Visit value = v_val, ex v_1
     * Devisit value = dv_val, ex dv_1
+    * count value = c_id, ex, c_0 this is specific to the count sort
+    * count active by id = ac_val, ex ac_0
+    * count deactive by id = dc_val, ex dc_0
+    * Replace with histo = r_loc_max_val_len, ex r_0_60_10_400 <-Creates new Histogram to replace current
+    * 
     */
     if(start>=action_array.length){
         return
@@ -1044,7 +1072,21 @@ function animate_sort(action_array,start){
                 div_array[loc].classList.remove('s_active')
                 div_array[loc].classList.add('s_lock');
                 break;
-
+            case "c":
+                did(action_array[start]).innerHTML = parseInt(did(action_array[start]).innerHTML)+1;
+                break;
+            case "ac":
+                did("c_"+loc).classList.add('s_active')
+                break;
+            case "dc":
+                did("c_"+loc).classList.remove('s_active')
+                break;
+            case "r":
+                let max = parseInt(actions[2]);
+                let value = parseInt(actions[3])
+                let length = parseInt(actions[4])
+                let histo = create_histo(max,value,length);
+                div_array[loc].replaceWith(histo)
         }
         setTimeout(function(){
             animate_sort(action_array,start+1)
@@ -1105,6 +1147,11 @@ function create_histo(max_value,c_value,quantity){
     let histo = document.createElement('div');
     histo.setAttribute('style',"width:"+width+"px; height:"+height+"px")
     histo.setAttribute('class','value_box');
+    if(width<2){
+        let border = 0;
+        histo.setAttribute('style',"width:"+width+"px; height:"+height+"px;border:"+border+"px;background-color:black")
+    }
+
 
     return histo;
 }
@@ -1173,7 +1220,7 @@ function qsort_start(){
         alert("Input is empty");
         return
     }
-    animation_arr.push("a_"+0);
+    
     qsort(0,sort_array.length);
     animate_sort(animation_arr,0)
     animation_arr=[];
@@ -1181,11 +1228,12 @@ function qsort_start(){
 }
 
 function qsort(left,right){
+    animation_arr.push("a_"+left);
     ///array = animation array, qsort sorts the global variable sort_array, not sent in as parameter///
     let l=left+1;
     let r = right-1;
     if(l>(r)){
-        animation_arr.push('l_'+l)
+        animation_arr.push('l_'+left)
         return;
     }
     animation_arr.push('v_'+l);
@@ -1249,4 +1297,119 @@ function qsort(left,right){
 
 
     return;
+}
+
+function count_sort(){
+    if(sort_array==[]||did("sort_values").value==""){
+        alert("Input is empty");
+        return
+    }
+
+    /*Create UI Specific features for Count Sort*/
+    removeAllChildNodes(did('count_array'))
+    let max = 0;
+    for(let i=0;i<sort_array.length;i++){
+        animation_arr.push('v_'+i)
+        if(sort_array[i]>max){
+            max=sort_array[i]
+        }
+    }
+    animation_arr.push('dv');
+    did('count-view').children[0].innerHTML = "Max Value: "+max;
+    ////Inititialized Sample Arrau Box////
+    let arr_box = document.createElement('div');
+    let arr = document.createElement('div');
+    let arr_val = document.createElement('h6')
+    let box_size;
+    arr_box.className = "array_box";
+    arr_box.innerHTML = 0;
+    if(1300/max>30){
+        box_size=30
+        arr_box.setAttribute('style','width:'+box_size+"px; height:"+box_size+"px")
+    }
+    else if(1300/max<25){
+        box_size=26;
+        arr_box.setAttribute('style','width:'+box_size+"px; height:"+box_size+"px")
+
+    }
+    else{
+        box_size=1300/max
+        arr_box.setAttribute('style','width:'+box_size+"px; height:"+box_size+"px")
+    }
+
+    ///Sample Array Box///
+    arr.appendChild(arr_box);
+    arr.appendChild(arr_val);
+
+    ///Initialize empty divs for array
+    let top = document.createElement('div')
+    let bottom = document.createElement('div')
+
+    if(max<50){
+        for(let i=0;i<=max;i++){
+            let clone = arr.cloneNode(true)
+            clone.children[0].id = 'c_'+i;
+            clone.children[1].innerHTML = i
+            top.appendChild(clone);
+        }
+    }
+    else if(max<=100){
+        for(let i=0;i<=50;i++){
+            let clone = arr.cloneNode(true)
+            clone.children[0].id = 'c_'+i;
+            clone.children[1].innerHTML = i
+            top.appendChild(clone);
+        }
+        for(let i=51;i<=max;i++){
+            let clone = arr.cloneNode(true)
+            clone.children[0].id = 'c_'+i;
+            clone.children[1].innerHTML = i
+            bottom.appendChild(clone);
+        }
+    }
+    else{
+        top.innerHTML="TOO MANY VALUES, CANNOT FORMAT ARRAYS THE MAX MUST BE LESS THAN 100"
+    }
+    did('count_array').appendChild(top)
+    did('count_array').appendChild(bottom)
+    /*End of UI for Count Sort*/
+
+    ////Sorting Algorithm////
+    let c_array=new Array(max+1).fill(0);
+    for(let i=0;i<sort_array.length;i++){
+        animation_arr.push('v_'+i);
+        if(max<=100){
+            animation_arr.push('c_'+sort_array[i]);
+        }
+        c_array[sort_array[i]]++;
+    }
+    let loc=0;
+    for(let i=0;i<c_array.length;i++){
+        if(max<=100){
+            animation_arr.push('ac_'+i);
+        }
+        for(let k=0;k<c_array[i];k++){
+            animation_arr.push('r_'+loc+'_'+max+'_'+i+"_"+sort_array.length);
+            animation_arr.push("l_"+loc);
+            loc++;
+        }
+        if(max<=100){
+            animation_arr.push('dc_'+i)
+        }
+    }
+    animation_arr.push('dv')
+    animate_sort(animation_arr,0);
+    animation_arr=[];
+
+    
+
+
+
+
+    // * count value = c_id, ex, c_0 this is specific to the count sort
+    // * count active by id = ac_val, ex ac_0
+    // * count deactive by id = dc_val, ex dc_0
+    // * Replace with histo = r_loc_max_val_len, ex r_0_60_10_400 <-Creates new Histogram to replace current
+
+
 }

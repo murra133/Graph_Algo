@@ -13,7 +13,9 @@
     <script src="script.js"></script>
 </head>
 <body>
-    <div id="data">
+    <div id="view_port">
+        <div id="data"></div>
+    </div>
     </div>
     <div id="settings" class="active" onclick="toggle_sidebar(this)">Settings</div>
     <div id ="sidebar" class="active">
@@ -26,9 +28,9 @@
         </div>
         <div id="select_algo">
             <p>Select Algorithm:<br></p>
-            <select name="" id="" onchange="algo(this)">
+            <select name="" id="" onchange="choose_sort(this)">
                 <option value="qs">Quick Sort</option>
-                <option value="hp">Heap Sort</option>
+                <option value="mg">Merge Sort</option>
                 <option value="is">Insertion Sort</option>
                 <option value="cs">Counting Sort</option>
                 <option value="bs">Bubble Sort</option>
