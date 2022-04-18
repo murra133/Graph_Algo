@@ -1,10 +1,12 @@
 ///Test///
 
-//// Side Bar Toggle////
+////Global Variables////
+var speed = 20;
+
+///Graph Variables///
 var type = "NA";
 var start = ""
 var location_ = []
-var speed = 20;
 var roads = [0,0]
 var blocks = [0,0]
 var rocks = [0,0]
@@ -14,6 +16,12 @@ var prev = ""
 var trail = 2;
 var road = .5;
 var trees = 10;
+////Sort Variables////
+var sort_array=[];
+var animation_arr = []
+
+
+//// Side Bar Toggle////
 
 function toggle_sidebar(button){
     if(button.getAttribute('class')=="inactive"){
@@ -61,10 +69,11 @@ function reset(){
     let v = qsa('.visit');
     let p = qsa('.path');
     let r = qsa('.relax');
-    let db = qsa('.value_box');
-    db.forEach(value=>{
-        value.className = 'value_box';
-    })
+
+    if (did("data")!=undefined){
+        removeAllChildNodes(did('data'));
+        visualize_sort();
+    }
     r.forEach(block=>{
         if(block.classList.contains('fa-solid')){
             block.classList.remove('relax')
@@ -111,6 +120,8 @@ function clear_(){
     }
     else if(did('data')!=null){
         removeAllChildNodes(did('data'))
+        did("sort_values").value = ""
+        array_val=[];
     }
 
 }
@@ -477,7 +488,6 @@ function animate_visit(element,i,stats){
     stats[0]=stats[0]+1;
     if(element[1][i].split(' ').includes('path')){
         stats[1]=stats[1]+parseFloat(vle(element[0][i]));
-        console.log(stats[1])
         element[0][i].removeAttribute('class');
         setTimeout(function(){
             element[0][i].className=element[1][i]
@@ -965,7 +975,6 @@ function bidjis(s,r,visited,algo){
     pqv =mp[0];pqid = mp[1];v=mp[2];parent=mp[3];visited=mp[4];tree = mp[5]
     
     while(pqv!=1&&pqv.length!=1){
-        console.log(pqv)
         mp = heap_remove(pqv,pqid)
         minv = mp[0]; minid=mp[1];pqv=mp[2];pqid=mp[3]
         n = relax_section(minid,visited,relaxed_map);
@@ -992,6 +1001,58 @@ function bidjis(s,r,visited,algo){
 /*
 * This section houses all the sorting related Algoriths
 */
+
+function animate_sort(action_array,start){
+    /*
+    * Activate Value = a_val, ex. a_1
+    * Lock Value =l_val, ex. l_1
+    * Swap Values = s_val1_val2, ex. s_3_10
+    * Deactivate Values = d_val, ex. d_1
+    * Visit value = v_val, ex v_1
+    * Devisit value = dv_val, ex dv_1
+    */
+    if(start>=action_array.length){
+        return
+    }
+    let div_array = did("data").children;
+        let actions=action_array[start].split("_");
+        let loc = parseInt(actions[1])
+        switch(actions[0]){
+            case "s":
+                let loc2 = parseInt(actions[2])
+                let temp2 = div_array[loc2].cloneNode(true);
+                let temp1 = div_array[loc].cloneNode(true);
+                div_array[loc2].replaceWith(temp1);
+                div_array[loc].replaceWith(temp2);
+                break;
+            case "a":
+                div_array[loc].classList.add('s_active');
+                break;
+            case "d":
+                div_array[loc].classList.remove('s_active');
+                break;
+            case "v":
+                div_array[loc].classList.add('s_visit')
+                break;
+            case "dv":
+                let visit = qsa('.s_visit');
+                visit.forEach(v=>{
+                    v.classList.remove('s_visit');
+                })
+                break;
+            case "l":
+                div_array[loc].classList.remove('s_active')
+                div_array[loc].classList.add('s_lock');
+                break;
+
+        }
+        setTimeout(function(){
+            animate_sort(action_array,start+1)
+        },speed)
+
+    }
+
+
 function isNumeric(val){
     if(parseInt(val)!=val){
         return false;
@@ -1027,11 +1088,11 @@ function randomnize_sort(){
         if(value>max){
             max=value;
         }
-        console.log(value)
         array_val.push(value)
     }
     draw_to_viewport(array_val,max);
     did('sort_values').value = input;
+    sort_array = array_val;
 
 }
 
@@ -1053,7 +1114,6 @@ function visualize_sort(){
         return
     }
     values = input.split(',');
-    console.log(values)
     let value;
     let array_val = Array();
     max=0;
@@ -1076,4 +1136,117 @@ function visualize_sort(){
         let histo = create_histo(max,array_val[i],array_val.length)
         view_port.appendChild(histo);
     }
+    sort_array=array_val;
+}
+
+function naive_sort(){
+    if(sort_array==[]||did("sort_values").value==""){
+        alert("Input is empty");
+        return
+    }
+    let animation_arr = [];
+    for(let i=0;i<sort_array.length;i++){
+        let min_pos=i;
+        animation_arr.push('a_'+i);
+        for(let k=i+1;k<sort_array.length;k++){
+            animation_arr.push('v_'+k)
+            if(sort_array[k]<sort_array[min_pos]){
+                min_pos=k;
+            }
+
+        }
+        animation_arr.push('a_'+min_pos);
+        animation_arr.push('s_'+i+'_'+min_pos);
+        animation_arr.push('l_'+i);
+        animation_arr.push('d_'+min_pos);
+        let temp = sort_array[i];
+        sort_array[i]=sort_array[min_pos];
+        sort_array[min_pos] = temp;
+        animation_arr.push('dv'); 
+    }
+
+    animate_sort(animation_arr,0)
+}
+
+function qsort_start(){
+    if(sort_array==[]||did("sort_values").value==""){
+        alert("Input is empty");
+        return
+    }
+    animation_arr.push("a_"+0);
+    qsort(0,sort_array.length);
+    animate_sort(animation_arr,0)
+    animation_arr=[];
+
+}
+
+function qsort(left,right){
+    ///array = animation array, qsort sorts the global variable sort_array, not sent in as parameter///
+    let l=left+1;
+    let r = right-1;
+    if(l>(r)){
+        animation_arr.push('l_'+l)
+        return;
+    }
+    animation_arr.push('v_'+l);
+    animation_arr.push('v_'+r);
+    
+    let temp;
+    while(l<r){
+        while(sort_array[l]<=sort_array[left]&&l<r){
+            animation_arr.push('v_'+(l));
+            l++;
+        }
+        while(sort_array[r]>=sort_array[left] &&l<r){
+            animation_arr.push('v_'+(r))
+            r--;
+        }
+        if(sort_array[l]>sort_array[left]&&sort_array[r]<sort_array[left]&&l<r){
+            temp =sort_array[r];
+            sort_array[r] = sort_array[l];
+            sort_array[l]=temp;
+            /// Animations///
+            ///Visit///
+            animation_arr.push("v_"+l);
+            animation_arr.push("v_"+(r))
+            ///Swap///
+            animation_arr.push("s_"+l+"_"+(r))
+
+            l=l+1;
+            r=r-1;
+        }
+
+    }
+
+    if(sort_array[l]>=sort_array[left]){
+        temp = sort_array[l-1];
+        sort_array[l-1]=sort_array[left];
+        sort_array[left]=temp;
+
+        ///animation///
+        animation_arr.push('s_'+(l-1)+"_"+left);
+        animation_arr.push('l_'+(l-1));
+        animation_arr.push('dv');
+
+        qsort(left,l-1);
+        ///Sent right Side///
+        qsort(l,right);
+    }
+    else{
+        temp = sort_array[l];
+        sort_array[l]=sort_array[left];
+        sort_array[left]=temp;
+        
+        ///animation///
+        animation_arr.push('s_'+(l)+"_"+left);
+        animation_arr.push('l_'+(l));
+        animation_arr.push('dv');
+        qsort(left,l);
+        ///Sent right Side///
+        qsort(l+1,right);
+    }
+
+
+
+    return;
 }

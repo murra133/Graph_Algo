@@ -387,3 +387,14 @@ i:hover{
     width: 60px;
     height: 25px;
 }
+
+.s_visit{
+    background-color: lightcyan;
+}
+
+.s_lock{
+    background-color: gray;
+}
+.s_active{
+    background-color: orange;
+}
