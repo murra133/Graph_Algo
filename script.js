@@ -1304,6 +1304,9 @@ function choose_sort(sort){
         count_view.appendChild(array)
         did('view_port').appendChild(count_view)
     }
+    else if(sort.value == 'is'){
+        did('buttons').children[0].setAttribute('onclick','insertion_sort()');
+    }
     
 }
 
@@ -1579,6 +1582,43 @@ function qsort(left,right){
 
 
     return;
+}
+
+function insertion_sort(){
+    let arr = new Array();
+        /*
+    * Activate Value = a_val, ex. a_1
+    * Lock Value =l_val, ex. l_1
+    * Swap Values = s_val1_val2, ex. s_3_10
+    * Deactivate Values = d_val, ex. d_1
+    * Visit value = v_val, ex v_1
+    * Devisit value = dv_val, ex dv_1
+    * count value = c_id, ex, c_0 this is specific to the count sort
+    * count active by id = ac_val, ex ac_0
+    * count deactive by id = dc_val, ex dc_0
+    * Replace with histo = r_loc_max_val_len, ex r_0_60_10_400 <-Creates new Histogram to replace current
+    * 
+    */
+    let n = sort_array.length;
+    for(let i = 1; i < n; i++){
+        let key = sort_array[i];
+        let j = i - 1;
+        animation_arr.push('a_'+i);
+        while(j >= 0 && sort_array[j] > key){
+            animation_arr.push('v_'+(j+1));
+            animation_arr.push('v_'+j);
+            sort_array[j+1] = sort_array[j];
+            animation_arr.push('s_'+j+'_'+(j+1));
+            animation_arr.push('dv_'+(j+1));
+            animation_arr.push('dv_'+j);
+            j--;
+            arr.push(sort_array);
+        }
+        sort_array[j+1] = key;
+        animation_arr.push('d_'+i);
+    }
+    console.log(arr);
+    animate_sort(animation_arr,0)
 }
 
 function count_sort(){
