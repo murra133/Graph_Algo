@@ -816,31 +816,60 @@ function bfs(s,l,r,visited){
 
 /////BiDirectional Djikstra//////
 
-function heap_remove(heapv,heapid){
+function heap_remove(heapv,heapid,action){
+    console.log(heapv)
+    ////Set action to "graph" if this function is to be ran in a graph function
+    let length_diff;
     let minv = heapv[1]
     let minid = heapid[1]
+    if(action!='graph'){
+        ///Remove the first
+        length_diff = sort_array.length-heapv.length+1
+        action.push('l_'+length_diff);
+        // console.log('l_'+length_diff)
+    }
     heapv[1]=heapv[heapv.length-1]
     heapid[1]=heapid[heapid.length-1]
     heapv.pop()
     heapid.pop()
+    length_diff = sort_array.length-heapv.length+1
+    if(action!='graph'){
+        let l = length_diff
+        action.push('v_'+(sort_array.length-1))
+        action.push('i_'+(sort_array.length -1)+"_"+l)
+        // for(let i=(sort_array.length-1);i>l;i--){
+        //     action.push('s_'+i+'_'+(i-1))
+        // }
+    }
     loc =1;
     let c=1;
 
+
     ///Move Down////
     while(heapv[loc]>heapv[loc*2]||heapv[loc]>heapv[loc*2+1]&&c ==1){
+        
         let tempv = heapv[loc];
         let tempid = heapid[loc];
         if (heapv[loc*2]==null&&heapv[loc*2+1]==null){
             c=1;
         }
         else if (heapv[loc*2]==null){
+            if(action!='graph'){
+                action.push('v_'+(loc*2+1))
+                action.push('s_'+(loc+length_diff-1)+'_'+(loc*2+length_diff));
+            }
             heapv[loc]=heapv[loc*2+1]
             heapid[loc]=heapid[loc*2+1]
             heapv[loc*2+1]=tempv
             heapid[loc*2+1]=tempid
             loc = loc*2+1  
+
         }
         else if(heapv[loc*2+1]==null){
+            if(action!='graph'){
+                action.push('v_'+(loc*2))
+                action.push('s_'+(loc+length_diff-1)+'_'+(loc*2+length_diff-1));
+            }
             heapv[loc]=heapv[loc*2]
             heapid[loc]=heapid[loc*2]
             heapv[loc*2]=tempv
@@ -849,6 +878,10 @@ function heap_remove(heapv,heapid){
         }
         else{
             if (heapv[loc*2]<heapv[loc*2+1]){
+                if(action!='graph'){
+                    action.push('v_'+(loc*2))
+                    action.push('s_'+(loc+length_diff-1)+'_'+(loc*2+length_diff-1));
+                }
                 heapv[loc]=heapv[loc*2]
                 heapid[loc]=heapid[loc*2]
                 heapv[loc*2]=tempv
@@ -857,6 +890,10 @@ function heap_remove(heapv,heapid){
                 
             }
             else{
+                if(action!='graph'){
+                    action.push('v_'+(loc*2+1))
+                    action.push('s_'+(loc+length_diff-1)+'_'+(loc*2+length_diff));
+                }
                 heapv[loc]=heapv[loc*2+1]
                 heapid[loc]=heapid[loc*2+1]
                 heapv[loc*2+1]=tempv
@@ -866,17 +903,31 @@ function heap_remove(heapv,heapid){
 
         }
     }
+    // console.log(action)
+    if(action!='graph'){
+        // action.push('d_'+loc);
+        action.push('dv')
+        return [heapv,heapid,action,minv]
+    }
     return [minv,minid,heapv,heapid]
 }
 
-function heap_insert(heapv,heapid,nv,nid){
+function heap_insert(heapv,heapid,nv,nid,action){
     heapv.push(nv)
     heapid.push(nid)
     let loc = heapv.length-1;
     let ploc = Math.floor(loc/2)
+    if(action!='graph'){
+        action.push('a_'+(loc-1))
+    }
 
     ////Move Up////
     while(loc!=1&&heapv[loc]<heapv[ploc]){
+        if(action!='graph'){
+            ///This is for the sort animation on the sort site
+            action.push('v_'+(ploc-1))
+            action.push('s_'+(loc-1)+"_"+(ploc-1))
+        }
         let tempv = heapv[loc];
         let tempid = heapid[loc];
         heapv[loc]= heapv[ploc]
@@ -886,7 +937,12 @@ function heap_insert(heapv,heapid,nv,nid){
         loc = ploc;
         ploc = Math.floor(loc/2)
     }
-
+    if(action!='graph'){
+        ///Returns the locations and the animation for heap sort///
+        action.push('d_'+(loc-1))
+        action.push('dv')
+        return [heapv,heapid,action]
+    }
     return [heapv,heapid]
 }
 
@@ -973,7 +1029,7 @@ function search_side(side,xs,ys,xp,yp,psource,v,tree,visited,parent,pqv,pqid,alg
             v[xs][ys]=v[xp][yp]+vle(side)
             parent[xs][ys] = xp+"_"+yp
             tree[xs][ys] = xp+"_"+yp
-            let q = heap_insert(pqv,pqid,v[xs][ys]+d,side.id)
+            let q = heap_insert(pqv,pqid,v[xs][ys]+d,side.id,'graph')
             pqv=q[0]
             pqid =q[1]
             visited = push_visited(visited,side,'visit')
@@ -1069,7 +1125,7 @@ function bidjis(s,r,visited,algo){
     pqv =mp[0];pqid = mp[1];v=mp[2];parent=mp[3];visited=mp[4];tree = mp[5]
     
     while(pqv!=1&&pqv.length!=1){
-        mp = heap_remove(pqv,pqid)
+        mp = heap_remove(pqv,pqid,'graph')
         minv = mp[0]; minid=mp[1];pqv=mp[2];pqid=mp[3]
         n = relax_section(minid,visited,relaxed_map);
         visited = n[1]; relaxed_map = n[0]
@@ -1129,7 +1185,7 @@ function biastar(s,r,visited,algo){
         console.log(pqve)
         console.log(pqide)
         if(pqvs[1]>pqve[1]){
-            mp = heap_remove(pqve,pqide)
+            mp = heap_remove(pqve,pqide,'graph')
             minv = mp[0]; minid=mp[1];pqve=mp[2];pqide=mp[3]
             n = relax_section(minid,visited,relaxed_map);
             visited = n[1]; relaxed_map = n[0]
@@ -1137,7 +1193,7 @@ function biastar(s,r,visited,algo){
             pqve =mp[0];pqide = mp[1];v=mp[2];parent=mp[3];visited=mp[4];tree = mp[5]
         }
         else{
-            mp = heap_remove(pqvs,pqids)
+            mp = heap_remove(pqvs,pqids,'graph')
             minv = mp[0]; minid=mp[1];pqvs=mp[2];pqids=mp[3]
             n = relax_section(minid,visited,relaxed_map);
             visited = n[1]; relaxed_map = n[0]
@@ -1307,6 +1363,9 @@ function choose_sort(sort){
     else if(sort.value == 'is'){
         did('buttons').children[0].setAttribute('onclick','insertion_sort()');
     }
+    else if ('hs'){
+        did('buttons').children[0].setAttribute('onclick','heap_sort()');
+    }
     
 }
 
@@ -1322,7 +1381,7 @@ function animate_sort(action_array,start){
     * count active by id = ac_val, ex ac_0
     * count deactive by id = dc_val, ex dc_0
     * Replace with histo = r_loc_max_val_len, ex r_0_60_10_400 <-Creates new Histogram to replace current
-    * 
+    * Insert Div = i_val_beforeval, ex i_2_5, insert item 2 before 5
     */
     if(start>=action_array.length){
         return
@@ -1372,6 +1431,13 @@ function animate_sort(action_array,start){
                 let length = parseInt(actions[4])
                 let histo = create_histo(max,value,length);
                 div_array[loc].replaceWith(histo)
+                break;
+            case "i":
+                let last_div = did('data').children[loc]
+                let clone_div = last_div.cloneNode(true)
+                did('data').removeChild(last_div)
+                did('data').insertBefore(clone_div,did('data').children[actions[2]])
+                break;
         }
         setTimeout(function(){
             animate_sort(action_array,start+1)
@@ -1722,16 +1788,25 @@ function count_sort(){
     animation_arr.push('dv')
     animate_sort(animation_arr,0);
     animation_arr=[];
+}
 
-    
+function heap_sort(){
+    if(sort_array==[]||did("sort_values").value==""){
+        alert("Input is empty");
+        return
+    }
+    let heap_array =[0]
+    let heap_pos = [0]
 
-
-
-
-    // * count value = c_id, ex, c_0 this is specific to the count sort
-    // * count active by id = ac_val, ex ac_0
-    // * count deactive by id = dc_val, ex dc_0
-    // * Replace with histo = r_loc_max_val_len, ex r_0_60_10_400 <-Creates new Histogram to replace current
-
-
+    for(let i=0;i<sort_array.length;i++){
+        ///Inserts all values into a heap array sorting them in the heap
+        let n = heap_insert(heap_array,heap_pos,sort_array[i],i,animation_arr);
+        heap_array = n[0]; heap_pos = n[1]; animation_arr = n[2]
+    }
+    while(heap_array.length>1){
+        let n=heap_remove(heap_array,heap_pos,animation_arr);
+        heap_array = n[0]; heap_pos = n[1]; animation_arr = n[2]
+    }
+    animate_sort(animation_arr,0)
+    animation_arr = []
 }
