@@ -445,6 +445,26 @@ function create_visit_parent_map(){
     return [mapv,mapp]
 }
 
+function create_infinite_value_map(){
+    let gridx = parseInt(did('xgrid').value)
+    let gridy = parseInt(did('ygrid').value);
+    let mapv = {}
+    for(let i=1;i<(gridx+1);i++){
+        mapv[i] = Array(gridy+1).fill(Infinity)
+    }
+    return mapv
+}
+
+function create_boolean_value_map(){
+    let gridx = parseInt(did('xgrid').value)
+    let gridy = parseInt(did('ygrid').value);
+    let visited = false;
+    let mapv = {}
+    for(let i=1;i<(gridx+1);i++){
+        mapv[i] = Array(gridy+1).fill(visited)
+    }
+    return mapv
+}
 
 //// Animattions ////
 
@@ -515,6 +535,7 @@ function animate_visit(element,i,stats){
 
 function reconstruct_path(parent,floc,s,visited){
     //// Takes in a parent matrix and the final location ////
+    console.log(parent);
     c = floc
     let x = parseInt(c.split('_')[0])
     let y = parseInt(c.split('_')[1])
@@ -523,6 +544,7 @@ function reconstruct_path(parent,floc,s,visited){
     }
     while(parent[x][y]!=null && parent[x][y]!=-1){
         let pid = parent[x][y]
+        console.log(pid);
         if(pid!= s){
             visited = push_visited(visited,did(pid),'path')
         }
@@ -614,6 +636,23 @@ function choose_algo(algo){
         }
 
     }
+    else if(algo=="dfs"){
+     let s=start;
+     let e;
+     for (let i=0;i<location_.length;i++){
+         e=location_[i];
+         visited = dfs(s,e,visited)
+        }
+     }
+     else if(algo=="dji"){
+        let s = start;
+        let e;
+        for(let i=0;i<location_.length;i++){
+            e = location_[i]
+            visited = djikstra(s,e,visited,algo)
+            s=e
+        }
+    }
     let stats = [0,0,(new Date).getTime()-time]
     animate_visit(visited,0,stats)
 }
@@ -632,7 +671,63 @@ function visited_push(element,visited){
     }
     return visited
 }
+///// Depth First Search/////
+function dfs(s,e,visited){
+    let map_ = create_visit_parent_map();
+    let v=map_[0]; let parent=map_[1];
+    let stack = [s]
+    let loc = s;
 
+    while (loc!=e&&stack.length!=0){
+        stack.shift()
+        var x = parseInt(loc.split('_')[0])
+        var y = parseInt(loc.split('_')[1])
+        visited = visited_push(did(loc),visited)
+        v[x][y] =1;
+        let top = did((x-1)+"_"+y)
+        let xt = x-1
+        let left = did(x+"_"+(y-1))
+        let yl = y-1
+        let right = did(x+"_"+(y+1))
+        let yr = y+1
+        let bottom = did((x+1)+"_"+y)
+        let xb = x+1
+        if(top!=null && vle(top)!='n'&&v[xt][y]!=1){
+            stack.unshift(top.id)
+            parent[xt][y] = x+"_"+y
+            v[xt][y]=1
+        }
+        if(left!=null && vle(left)!='n'&&v[x][yl]!=1){
+            stack.unshift(left.id)
+            parent[x][yl] = x+"_"+y
+            v[x][yl]=1
+        }
+        if(bottom!=null && vle(bottom)!='n'&&v[xb][y]!=1){
+            stack.unshift(bottom.id)
+            parent[xb][y] = x+"_"+y
+            v[xb][y]=1
+        }
+        if(right!=null && vle(right)!='n'&&v[x][yr]!=1){
+            stack.unshift(right.id)
+            parent[x][yr] = x+"_"+y
+            v[x][yr]=1
+        }
+        
+        if(loc!=e){
+            loc=stack[0]
+        }
+    }
+    
+    if(loc==e){
+        visited = reconstruct_path(parent,e,s,visited)
+    }
+    else{
+        alert("No Path has Been Found")
+        return visited
+    }
+
+    return visited
+}
 /////Breadth First Search///////
 function bfs(s,l,r,visited){
     let vn = 0;
@@ -992,6 +1087,127 @@ function bidjis(s,r,visited,algo){
     visited = reconstruct_path(parent,pqid,s,visited)
 
     return visited;
+}
+
+function djikstra(s,r,visited,algo){
+    let count = 0;
+    let gridx = parseInt(did('xgrid').value)
+    let gridy = parseInt(did('ygrid').value);
+    let map_ = create_infinite_value_map();
+    map_[s.split('_')[0]][s.split('_')[1]] = 0;
+    let map_visited = create_boolean_value_map();
+    let parent = create_visit_parent_map()[1];
+    let map_path = create_visit_parent_map()[1];
+    x = parseInt(s.split('_')[0]);
+    y = parseInt(s.split('_')[1]);
+    destination_x = parseInt(r.split('_')[0]);
+    destination_y = parseInt(r.split('_')[1]);
+    push_visited(visited,did(x+"_"+y),"visit");
+    finished = false;
+    while(!finished){
+        push_visited(visited,did(x+"_"+y),"relax");
+        if((x < gridx)&&(vle(did((x+1)+"_"+y))!='n')){
+            var original_loc = did((x+1)+"_"+y);
+            if((x+1==destination_x)&&(y==destination_y)){
+                var original_loc_value = 0;
+            }
+            else{
+                var original_loc_value = vle(original_loc);
+            }
+            if(map_visited[x+1][y]!=true){
+                push_visited(visited,did((x+1)+"_"+y),"visit");
+                if((map_[x+1][y]>original_loc_value+map_[x][y])&&map_visited[x+1][y] == false){
+                    map_[x+1][y]=original_loc_value+map_[x][y];
+                    map_path[x+1][y] = x+"_"+y;
+                }
+            }
+        }
+        if((x > 1)&&(vle(did((x-1)+"_"+y))!='n')){
+            var original_loc = did((x-1)+"_"+y);
+            if((x-1==destination_x)&&(y==destination_y)){
+                var original_loc_value = 0;
+            }
+            else{
+                var original_loc_value = vle(original_loc);
+            }
+            if(map_visited[x-1][y]!=true){
+                push_visited(visited,did((x-1)+"_"+y),"visit");
+                if((map_[x-1][y]>original_loc_value+map_[x][y])&&map_visited[x-1][y] == false){
+                    map_[x-1][y]=original_loc_value+map_[x][y];
+                    map_path[x-1][y] = x+"_"+y;
+                }
+            }
+        }
+        if((y < gridy)&&(vle(did(x+"_"+(y+1)))!='n')){
+            var original_loc = did(x+"_"+(y+1));
+            if((x==destination_x)&&(y+1==destination_y)){
+                var original_loc_value = 0;
+            }
+            else{
+                var original_loc_value = vle(original_loc);
+            }
+            if(map_visited[x][y+1]!=true){
+                push_visited(visited,did(x+"_"+(y+1)),"visit");
+                if((map_[x][y+1]>original_loc_value+map_[x][y])&&map_visited[x][y+1] == false){
+                    map_[x][y+1]=original_loc_value+map_[x][y];
+                    map_path[x][y+1] = x+"_"+y;
+                }
+            }
+        }
+        if((y > 1)&&(vle(did(x+"_"+(y-1)))!='n')){
+            var original_loc = did(x+"_"+(y-1));
+            if((x==destination_x)&&(y-1==destination_y)){
+                var original_loc_value = 0;
+            }
+            else{
+                var original_loc_value = vle(original_loc);
+            }
+            if(map_visited[x][y-1]!=true){
+                push_visited(visited,did(x+"_"+(y-1)),"visit");
+                if((map_[x][y-1]>original_loc_value+map_[x][y])&&map_visited[x][y-1] == false){
+                    map_[x][y-1]=original_loc_value+map_[x][y];
+                    map_path[x][y-1] = x+"_"+y;
+                }
+            }
+        }
+        map_visited[x][y]= true;
+        map_temp = map_;
+        console.log(map_visited);
+        console.log(map_visited[2][3]);
+        for(var i = 1; i <= gridx; i++){
+            for(var j = 1; j <= gridy; j++){
+                if(map_visited[i][j] == true){
+                    console.log(i+"_"+j);
+                    map_temp[i][j] = Infinity;
+                }
+            }
+        }      
+        console.log(map_temp)
+        console.log(r.split('_')[0]);
+        console.log(x);
+        var min = Infinity;
+        for(var i = 1; i <= gridx; i++){
+            for(var j = 1; j <= gridy; j++){
+                if(map_temp[i][j] < min){
+                    min = map_temp[i][j];
+                    x = i;
+                    y = j;
+                }
+            }
+        } 
+        console.log(vle(did(r.split('_')[0]+"_"+r.split('_')[1])));
+        console.log(map_path);
+        console.log(x);
+        console.log(y);
+        console.log(parseInt(r.split('_')[0]));
+        console.log(parseInt(r.split('_')[1]));
+        //push_visited(visited,did(x+"_"+y),"visit");
+        if((x==parseInt(r.split('_')[0]))&&(y==parseInt(r.split('_')[1]))){
+            finished = true;
+        }
+    }
+    visited = reconstruct_path(map_path,r,s,visited)
+     return visited;
 }
 
 
