@@ -439,7 +439,7 @@ function create_visit_parent_map(){
     let mapv = {}
     let mapp = {}
     for(let i=1;i<(gridx+1);i++){
-        mapv[i] = Array(gridy+1).fill(10000)
+        mapv[i] = Array(gridy+1).fill(Infinity)
         mapp[i] = Array(gridy+1).fill(-1)
     }
     return [mapv,mapp]
@@ -613,6 +613,16 @@ function choose_algo(algo){
             s=e
         }
 
+    }
+    else if(algo=='astar'){
+        console.log("astar")
+        let s = start;
+        let e;
+        for(let i=0;i<location_.length;i++){
+            e = location_[i]
+            visited = biastar(s,e,visited,algo)
+            s=e
+        }
     }
     let stats = [0,0,(new Date).getTime()-time]
     animate_visit(visited,0,stats)
@@ -812,7 +822,7 @@ function check_source(id_,tree){
 }
 
 function dist(x1,x2,y1,y2){
-    return(Math.sqrt(parseFloat(((x1-x2)*(x1-x2)+(y1-y2)*(y1-y2)))))
+    return(Math.sqrt(parseFloat(((x1-x2)*(x1-x2)+(y1-y2)*(y1-y2))))*trail)
 }
 
 function push_visited(visited,element,action){
@@ -857,7 +867,11 @@ function search_side(side,xs,ys,xp,yp,psource,v,tree,visited,parent,pqv,pqid,alg
 
         }
         let d;let x; let y;
+        d=0;
         if(algo=="astar"){
+            x = parseInt(end.split("_")[0])
+            y = parseInt(end.split("_")[1])
+            d = dist(xs,x,ys,y)
             if(side_source==start){
                 x = parseInt(end.split("_")[0])
                 y = parseInt(end.split("_")[1])
@@ -869,10 +883,6 @@ function search_side(side,xs,ys,xp,yp,psource,v,tree,visited,parent,pqv,pqid,alg
                 d = dist(xs,x,ys,y)
             }
         }
-        else{
-            d= 0;
-        }
-        
         if((v[xp][yp]+vle(side))<v[xs][ys]){
             v[xs][ys]=v[xp][yp]+vle(side)
             parent[xs][ys] = xp+"_"+yp
@@ -886,9 +896,7 @@ function search_side(side,xs,ys,xp,yp,psource,v,tree,visited,parent,pqv,pqid,alg
     return[pqv,pqid,v,visited,tree,parent]
 }
 
-function check_sides_final(xp,yp,){
 
-}
 function djiv(id_,pqv,pqid,v,parent,visited,tree,algo,start,end,relaxed_map){
     let x = parseInt(id_.split("_")[0])
     let y = parseInt(id_.split("_")[1])
@@ -990,11 +998,78 @@ function bidjis(s,r,visited,algo){
     visited = push_visited(visited,did(minid),'path')
     visited = reconstruct_path(parent,minid,s,visited)
     visited = reconstruct_path(parent,pqid,s,visited)
+    console.log(v)
+
 
     return visited;
 }
 
+function biastar(s,r,visited,algo){
+    ////Inititializes Priority Q for start and end///
+    let pqvs = [0]
+    let pqids = [0]
+    let pqve = [0]
+    let pqide = [0]
+    let n;
+    let minv;let minid;
+    ////Create Emmpty grids representing the system///
+    let map_ = create_visit_parent_map();
+    let v=map_[0]; let parent=map_[1];
+    map_ = create_visit_parent_map();
+    let tree = map_[1]; let relaxed_map = map_[0];
+    v[s.split('_')[0]][s.split('_')[1]] = 0
+    v[r.split('_')[0]][r.split('_')[1]] = 0
+    ///relax section to be visited///
+    n = relax_section(s,visited,relaxed_map);
+    visited = n[1]; relaxed_map = n[0]
+    ///Visit start send in end as end///
+    let mp = djiv(s,pqvs,pqids,v,parent,visited,tree,algo,s,r,relaxed_map)
+    pqvs =mp[0];pqids = mp[1];v=mp[2];parent=mp[3];visited=mp[4];tree = mp[5];
+    ////Relax End Section////
+    n = relax_section(r,visited,relaxed_map);
+    visited = n[1]; relaxed_map = n[0]
+    ///Visit end send in start as end////
+    mp = djiv(r,pqve,pqide,v,parent,visited,tree,algo,r,s,relaxed_map)
+    pqve =mp[0];pqide = mp[1];v=mp[2];parent=mp[3];visited=mp[4];tree = mp[5]
 
+    ///Choose side to visit first///
+
+
+    while(pqvs!=1&&pqvs.length!=1&&pqve!=1&&pqve.length!=1){
+        console.log('s')
+        console.log(pqvs)
+        console.log(pqids)
+        console.log('e')
+        console.log(pqve)
+        console.log(pqide)
+        if(pqvs[1]>pqve[1]){
+            mp = heap_remove(pqve,pqide)
+            minv = mp[0]; minid=mp[1];pqve=mp[2];pqide=mp[3]
+            n = relax_section(minid,visited,relaxed_map);
+            visited = n[1]; relaxed_map = n[0]
+            mp = djiv(minid,pqve,pqide,v,parent,visited,tree,algo,r,pqids[1],relaxed_map)
+            pqve =mp[0];pqide = mp[1];v=mp[2];parent=mp[3];visited=mp[4];tree = mp[5]
+        }
+        else{
+            mp = heap_remove(pqvs,pqids)
+            minv = mp[0]; minid=mp[1];pqvs=mp[2];pqids=mp[3]
+            n = relax_section(minid,visited,relaxed_map);
+            visited = n[1]; relaxed_map = n[0]
+            mp = djiv(minid,pqvs,pqids,v,parent,visited,tree,algo,s,pqide[1],relaxed_map)
+            pqvs =mp[0];pqids = mp[1];v=mp[2];parent=mp[3];visited=mp[4];tree = mp[5]
+        }
+    }
+    if(pqve.length==1&&pqvs.length==1){
+        visited[0].push(-1)
+        return visited
+    }
+    console.log(v)
+    visited = push_visited(visited,did(minid),'path')
+    visited = reconstruct_path(parent,minid,s,visited)
+    visited = reconstruct_path(parent,minid,r,visited)
+
+    return visited;
+}
 
 
 
