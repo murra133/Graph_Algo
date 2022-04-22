@@ -1680,10 +1680,8 @@ function insertion_sort(){
         }
         animation_arr.push('dv_'+(j+2));
         animation_arr.push('dv_'+(j+1));
-        animation_arr.push('a_'+(j+1));
         sort_array[j + 1] = key;
         animation_arr.push('i_'+i+'_'+(j+1));
-        animation_arr.push('d_'+i);
         animation_arr.push('d_'+(j+1));
     }
     for(let i = 0; i < n; i++){
