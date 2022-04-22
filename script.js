@@ -1666,6 +1666,8 @@ function insertion_sort(){
     * 
     */
     let n = sort_array.length;
+    let start = sort_array;
+    console.log(start);
     for(let i = 1; i < n; i++){
         let key = sort_array[i];
         let j = i - 1;
@@ -1673,18 +1675,22 @@ function insertion_sort(){
         while(j >= 0 && sort_array[j] > key){
             animation_arr.push('v_'+(j+1));
             animation_arr.push('v_'+j);
-            sort_array[j+1] = sort_array[j];
-            animation_arr.push('s_'+j+'_'+(j+1));
-            animation_arr.push('dv_'+(j+1));
-            animation_arr.push('dv_'+j);
+            sort_array[j + 1] = sort_array[j];
             j--;
-            arr.push(sort_array);
         }
-        sort_array[j+1] = key;
+        animation_arr.push('dv_'+(j+2));
+        animation_arr.push('dv_'+(j+1));
+        animation_arr.push('a_'+(j+1));
+        sort_array[j + 1] = key;
+        animation_arr.push('i_'+i+'_'+(j+1));
         animation_arr.push('d_'+i);
+        animation_arr.push('d_'+(j+1));
     }
-    console.log(arr);
+    for(let i = 0; i < n; i++){
+        animation_arr.push('l_'+i);
+    }
     animate_sort(animation_arr,0)
+    animation_arr=[];
 }
 
 function count_sort(){
@@ -1787,7 +1793,7 @@ function count_sort(){
     }
     animation_arr.push('dv')
     animate_sort(animation_arr,0);
-    animation_arr=[];
+    animation_arr = [];
 }
 
 function heap_sort(){
