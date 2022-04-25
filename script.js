@@ -467,14 +467,13 @@ function animate_visit(element,i,stats){
     stats[0]=stats[0]+1;
     if(element[1][i].split(' ').includes('path')){
         stats[1]=stats[1]+parseFloat(vle(element[0][i]));
-        console.log(stats[1])
         element[0][i].removeAttribute('class');
         setTimeout(function(){
             element[0][i].className=element[1][i]
         },0)
         
     }
-    if(!element[1][i].split(' ').includes('path')){
+    if(!element[1][i].split(' ').includes('path') &&!element[0][i].classList.contains('path')){
         element[0][i].removeAttribute('class');
         setTimeout(function(){
             element[0][i].className=element[1][i]
@@ -514,6 +513,7 @@ return visited
 
 
 function choose_algo(algo){
+    reset()
     let time = (new Date).getTime()
     if(start==''){
         alert("Starting Position Needs to be Chosen")

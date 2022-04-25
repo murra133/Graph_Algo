@@ -1,13 +1,17 @@
 
+body{
+    overflow-x: scroll;
+}
 #sidebar{
     width: 400px;
     height: 100%;
-    position: absolute;
+    position: fixed;
     background-color: rgb(246, 249, 251);
     left: -400px;
     display: flex;
     flex-flow: column;
     transition: all 500ms;
+    overflow-y: scroll;
 }
 
 #settings{
