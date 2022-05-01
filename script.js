@@ -19,6 +19,7 @@ var trees = 10;
 ////Sort Variables////
 var sort_array=[];
 var animation_arr = []
+var view_type = "histo";
 
 
 //// Side Bar Toggle////
@@ -1346,10 +1347,8 @@ function choose_sort(sort){
     let data = did('data').cloneNode(true);
     removeAllChildNodes(did('view_port'))
     did('view_port').appendChild(data)
-    if(sort.value=='qs'){
-        did('buttons').children[0].setAttribute('onclick','qsort_start()');
-    }
-    else if(sort.value=='cs'){
+    did('buttons').children[0].setAttribute('onclick','run_sort("'+sort.value+'")');
+    if(sort.value=='cs'){
         did('buttons').children[0].setAttribute('onclick','count_sort()');
         let count_view = document.createElement('div');
         count_view.id = "count-view"
@@ -1361,13 +1360,47 @@ function choose_sort(sort){
         count_view.appendChild(array)
         did('view_port').appendChild(count_view)
     }
-    else if(sort.value == 'is'){
-        did('buttons').children[0].setAttribute('onclick','insertion_sort()');
+}
+
+function  run_sort(sort){
+    if(sort_array==[]||did("sort_values").value==""){
+        alert("Input is empty");
+        return
     }
-    else if ('hs'){
-        did('buttons').children[0].setAttribute('onclick','heap_sort()');
+    ///Reset the values///
+    toggle_sidebar(did("settings"))
+    reset();
+    switch (sort){
+        case "bs":
+            bubble_sort();
+            break;
+        case "hs":
+            heap_sort();
+            break;
+        case "nv":
+            naive_sort();
+            break;
+        case "qs":
+            qsort_start();
+            break;
+        case "is":
+            insertion_sort();
+            break;
+        case "ms":
+            merge_sort();
+            break;
+        case "all":
+            bubble_sort();
+            reset();
+            heap_sort();
+            reset();
+            quick_sort();
+            reset();
+            naive_sort();
+            break;
     }
-    
+
+
 }
 
 function animate_sort(action_array,start){
@@ -1567,12 +1600,7 @@ function naive_sort(){
     animate_sort(animation_arr,0)
 }
 
-function qsort_start(){
-    if(sort_array==[]||did("sort_values").value==""){
-        alert("Input is empty");
-        return
-    }
-    
+function qsort_start(){    
     qsort(0,sort_array.length);
     animate_sort(animation_arr,0)
     animation_arr=[];
@@ -1814,4 +1842,34 @@ function heap_sort(){
     }
     animate_sort(animation_arr,0)
     animation_arr = []
+}
+
+///Bubble Sort///
+function bubble_sort(){
+    if(sort_array==[]||did("sort_values").value==""){
+        alert("Input is empty");
+        return
+    }
+    let sorted =0;
+    while(sorted==0){
+        sorted=1;
+        animation_arr.push('a_0');
+        for(let i=0;i<sort_array.length-1;i++){
+            animation_arr.push('a_'+(i+1));
+            if(sort_array[i]>sort_array[i+1]){
+                sorted=0;
+                let temp = sort_array[i];
+                sort_array[i] = sort_array[i+1];
+                sort_array[i+1]=temp;
+                animation_arr.push('s_'+i+'_'+(i+1))
+            }
+            animation_arr.push('d_'+i);
+        }
+        animation_arr.push('d_'+(sort_array.length-1));
+    }
+    for(let i=0;i<sort_array.length;i++){
+        animation_arr.push('l_'+i);
+    }
+    animate_sort(animation_arr,0);
+    animation_arr=[];
 }
