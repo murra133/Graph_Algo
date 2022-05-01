@@ -557,6 +557,7 @@ return visited
 
 function choose_algo(algo){
     reset()
+    toggle_sidebar(did("settings"))
     let time = (new Date).getTime()
     if(start==''){
         alert("Starting Position Needs to be Chosen")
@@ -1343,6 +1344,8 @@ function djikstra(s,r,visited,algo){
 
 function choose_sort(sort){
     ///Reset ViewPort to Standard////
+    toggle_sidebar(did("settings"))
+    reset();
     let data = did('data').cloneNode(true);
     removeAllChildNodes(did('view_port'))
     did('view_port').appendChild(data)
