@@ -1,13 +1,17 @@
 
+body{
+    overflow: scroll;
+}
 #sidebar{
     width: 400px;
     height: 100%;
-    position: absolute;
+    position: fixed;
     background-color: rgb(246, 249, 251);
     left: -400px;
     display: flex;
     flex-flow: column;
     transition: all 500ms;
+    overflow-y: scroll;
 }
 
 #settings{
@@ -216,6 +220,12 @@ i:hover{
   /* Statistics */
   #stats>p{
       display: inline-block;
+  }
+
+  #sort_stats{
+      display: flex;
+      flex-direction: row;
+      column-gap: 20px;
   }
 
   /* Button */
@@ -440,4 +450,51 @@ i:hover{
 }
 .s_active{
     background-color: orange;
+    border-color: orange;
+}
+
+
+
+/*Tree CSS */
+.tree_levels{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-evenly;
+}
+#tree{
+    display: flex;
+    flex-direction: column;
+    width: 1300px;
+    height: 700px;
+    border:solid black 1px;
+    border-radius: 10px;
+    padding: 20px;
+
+}
+
+.tree_node{
+    border:solid black 1px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content:center;
+    margin: 2px;
+    background-color: white;
+    z-index: 1;
+}
+
+.blank_node{
+
+}
+
+.tree_edge{
+    position: absolute;
+    border:solid black 1px;
+    background-color: black;
+}
+
+.tree_line{
+    stroke:red;
+    stroke-width: 2px;
 }

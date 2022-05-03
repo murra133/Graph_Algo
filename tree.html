@@ -11,17 +11,13 @@
     <script src="https://kit.fontawesome.com/38a84518ea.js" crossorigin="anonymous"></script> 
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
     <script src="script.js"></script>
-    <script src="sort.js"></script>
+    <script src="tree.js"></script>
 </head>
-<body>
-
-    <div id="view_port">
-        <div id="sort_stats">
-            <h5>Stats:</h5>
-            <p>Number of values visited: <p id="stat_visit"> 0</p> visited </p>
-            <p>Time taken to compute: <p id="stat_time"> 0</p> ms </p>
+<body onresize="draw_edge()">
+    <div id="view_port" width="1000" height="700">
+        <div id="tree"></div>
+        <div id="edges">
         </div>
-        <div id="data"></div>
     </div>
     </div>
     <div id="settings" class="active" onclick="toggle_sidebar(this)">Settings</div>
@@ -65,8 +61,8 @@
               
         </div>
         <div id = "buttons">
-            <button onclick="run_sort('nv')" class="run-button">Run</button>
-            <button class="reset-button" onclick="reset()">Reset</button>
+            <button onclick="draw_tree()" class="run-button">Run</button>
+            <button class="reset-button" onclick="draw_edge()">Reset</button>
             <button class="clear-button" onclick="clear_()">Clear</button>
 
 
