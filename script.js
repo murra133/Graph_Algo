@@ -18,6 +18,8 @@ var road = .5;
 var trees = 10;
 ////Sort Variables////
 var sort_array=[];
+var length = 0;
+var max = 0;
 var animation_arr = []
 
 
@@ -1363,6 +1365,11 @@ function choose_sort(sort){
     else if(sort.value == 'is'){
         did('buttons').children[0].setAttribute('onclick','insertion_sort()');
     }
+    else if(sort.value == 'mg'){
+        max = Math.max(...sort_array);
+        length = sort_array.length-1;
+        did('buttons').children[0].setAttribute('onclick','merge_sort(sort_array, 0, length)');
+    }
     else if ('hs'){
         did('buttons').children[0].setAttribute('onclick','heap_sort()');
     }
@@ -1663,11 +1670,15 @@ function insertion_sort(){
     * count active by id = ac_val, ex ac_0
     * count deactive by id = dc_val, ex dc_0
     * Replace with histo = r_loc_max_val_len, ex r_0_60_10_400 <-Creates new Histogram to replace current
-    * 
+    * Insert Div = i_val_beforeval, ex i_2_5, insert item 2 before 5
     */
+    if(sort_array==[]||did("sort_values").value==""){
+        alert("Input is empty");
+        return
+    }
+    
     let n = sort_array.length;
     let start = sort_array;
-    console.log(start);
     for(let i = 1; i < n; i++){
         let key = sort_array[i];
         let j = i - 1;
@@ -1689,6 +1700,82 @@ function insertion_sort(){
     }
     animate_sort(animation_arr,0)
     animation_arr=[];
+}
+
+function merge_sort(arr, l, r){
+    merge_sort1(arr, l, r);
+    for(let i = 0; i < sort_array.length; i++){
+        animation_arr.push('l_'+i);
+    }
+    animate_sort(animation_arr,0)
+    animation_arr=[];
+}
+
+function merge_sort1(arr, l, r){
+    if (l < r) {
+        let m = (l+ Math.floor((r-l)/2));
+        merge_sort1(arr, l, m);
+        merge_sort1(arr, m + 1, r);
+        merge(arr, l, m, r);
+    }
+}
+
+function merge(arr, l, mid, r){
+        let n1 = mid - l + 1;
+        let n2 = r - mid;
+        let L = new Array(n1);
+        let R = new Array(n2);
+        for(let i = 0; i < n1; ++i){
+            L[i] = arr[l + i];
+        }
+        for(let j = 0; j < n2; ++j){
+            R[j] = arr[mid + 1 + j];
+        }
+        let i = 0
+        let j = 0;
+        let k = l;
+        while (i < n1 && j < n2) {
+            animation_arr.push('v_'+(l+i));
+            animation_arr.push('v_'+(mid + 1+j));
+            if (L[i] <= R[j]) {
+                animation_arr.push('dv_'+(l+i));
+                animation_arr.push('dv_'+(mid + 1+j));
+                animation_arr.push('a_'+k);
+                arr[k] = L[i];
+                animation_arr.push('r_'+k+'_'+max+'_'+L[i]+'_'+sort_array.length);
+                animation_arr.push('d_'+k);
+                i++;
+            }
+            else {
+                animation_arr.push('dv_'+(l+i));
+                animation_arr.push('dv_'+(mid + 1+j));
+                animation_arr.push('a_'+k);
+                arr[k] = R[j];
+                animation_arr.push('r_'+k+'_'+max+'_'+R[j]+'_'+sort_array.length);
+                animation_arr.push('d_'+k);
+                j++;
+            }
+            k++;
+        }
+        while (i < n1) {
+            animation_arr.push('v_'+(l+i));
+            animation_arr.push('a_'+k);
+            arr[k] = L[i];
+            animation_arr.push('r_'+k+'_'+max+'_'+L[i]+'_'+sort_array.length);
+            animation_arr.push('d_'+k);
+            i++;
+            k++;
+        }
+        while (j < n2) {
+            animation_arr.push('v_'+(mid + 1+j));
+            animation_arr.push('a_'+k);
+            arr[k] = R[j];
+            animation_arr.push('r_'+k+'_'+max+'_'+R[j]+'_'+sort_array.length);
+            animation_arr.push('d_'+k);
+            j++;
+            k++;
+        }
+
 }
 
 function count_sort(){
