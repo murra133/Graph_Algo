@@ -6,6 +6,8 @@
 var sort_array=[];
 var animation_arr = []
 var view_type = "histo";
+var length = 0;
+var max = 0;
 
 function choose_sort(sort){
     ///Reset ViewPort to Standard////
@@ -58,6 +60,7 @@ function  run_sort(sort){
         return
     }
     let start_time = new Date().getTime()
+    max = Math.max(...sort_array);
     ///Reset the values///
     toggle_sidebar(did("settings"))
     reset();
@@ -81,7 +84,7 @@ function  run_sort(sort){
             insertion_sort();
             break;
         case "ms":
-            merge_sort();
+            merge_sort(sort_array, 0, sort_array.length-1);
             break;
         case "all":
             bubble_sort();
@@ -480,6 +483,81 @@ function insertion_sort(){
     for(let i = 0; i < n; i++){
         animation_arr.push('l_'+i);
     }
+
+}
+
+function merge_sort(arr, l, r){
+    merge_sort1(arr, l, r);
+    for(let i = 0; i < sort_array.length; i++){
+        animation_arr.push('l_'+i);
+    }
+    animate_sort(animation_arr,0)
+    animation_arr=[];
+}
+
+function merge_sort1(arr, l, r){
+    if (l < r) {
+        let m = (l+ Math.floor((r-l)/2));
+        merge_sort1(arr, l, m);
+        merge_sort1(arr, m + 1, r);
+        merge(arr, l, m, r);
+    }
+}
+
+function merge(arr, l, mid, r){
+        let n1 = mid - l + 1;
+        let n2 = r - mid;
+        let L = new Array(n1);
+        let R = new Array(n2);
+        for(let i = 0; i < n1; ++i){
+            animation_arr.push('v_'+(l+i));
+            L[i] = arr[l + i];
+        }
+        for(let j = 0; j < n2; ++j){
+            animation_arr.push('v_'+(mid + 1+j));
+            R[j] = arr[mid + 1 + j];
+        }
+        let i = 0
+        let j = 0;
+        let k = l;
+        while (i < n1 && j < n2) {
+            if (L[i] <= R[j]) {
+                animation_arr.push('a_'+k);
+                arr[k] = L[i];
+                animation_arr.push('r_'+k+'_'+max+'_'+L[i]+'_'+sort_array.length);
+                animation_arr.push('d_'+k);
+                animation_arr.push('v_'+k);
+                i++;
+            }
+            else {
+                animation_arr.push('a_'+k);
+                arr[k] = R[j];
+                animation_arr.push('r_'+k+'_'+max+'_'+R[j]+'_'+sort_array.length);
+                animation_arr.push('d_'+k);
+                animation_arr.push('v_'+k);
+                j++;
+            }
+            k++;
+        }
+        while (i < n1) {
+            animation_arr.push('a_'+k);
+            arr[k] = L[i];
+            animation_arr.push('r_'+k+'_'+max+'_'+L[i]+'_'+sort_array.length);
+            animation_arr.push('d_'+k);
+            animation_arr.push('v_'+k);
+            i++;
+            k++;
+        }
+        while (j < n2) {
+            animation_arr.push('a_'+k);
+            arr[k] = R[j];
+            animation_arr.push('r_'+k+'_'+max+'_'+R[j]+'_'+sort_array.length);
+            animation_arr.push('d_'+k);
+            animation_arr.push('v_'+k);
+            j++;
+            k++;
+        }
+        animation_arr.push('dv');
 
 }
 
