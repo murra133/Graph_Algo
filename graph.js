@@ -277,7 +277,9 @@ function add_single(current_loc){
     }
     else if(d_.className.split(' ')[2] =='location' ){
         let l = location_.length;
-        d_.innerHTML = l+1;
+        let p = document.createElement('p');
+        p.innerHTML = l+1;
+        d_.appendChild(p);
         location_.push(d_.id)
     }
 
@@ -312,8 +314,14 @@ function add_type_constant(current_loc){
 
 
 function create_visit_parent_map(){
+    if(did('ygrid').tagName=="INPUT"){
     let gridx = parseInt(did('xgrid').value)
     let gridy = parseInt(did('ygrid').value);
+    }
+    else{
+        gridy = vle(did('ygrid'))
+        gridx = vle(did('xgrid'))
+    }
     let mapv = {}
     let mapp = {}
     for(let i=1;i<(gridx+1);i++){
@@ -578,15 +586,15 @@ function dfs(s,e,visited){
             parent[xt][y] = x+"_"+y
             v[xt][y]=1
         }
-        if(left!=null && vle(left)!='n'&&v[x][yl]!=1){
-            stack.unshift(left.id)
-            parent[x][yl] = x+"_"+y
-            v[x][yl]=1
-        }
         if(bottom!=null && vle(bottom)!='n'&&v[xb][y]!=1){
             stack.unshift(bottom.id)
             parent[xb][y] = x+"_"+y
             v[xb][y]=1
+        }
+        if(left!=null && vle(left)!='n'&&v[x][yl]!=1){
+            stack.unshift(left.id)
+            parent[x][yl] = x+"_"+y
+            v[x][yl]=1
         }
         if(right!=null && vle(right)!='n'&&v[x][yr]!=1){
             stack.unshift(right.id)

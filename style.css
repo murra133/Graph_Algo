@@ -2,6 +2,19 @@
 body{
     overflow: scroll;
 }
+
+#controls{
+    background-color: rgb(246, 249, 251);
+    width: auto;
+    height: auto;
+    border: solid black 1px;
+    border-radius: 10px;
+    padding: 10px 20px;
+    position: absolute;
+    left: calc(100% - 300px);
+    top: calc(100% - 246px);
+
+}
 #sidebar{
     width: 400px;
     height: 100%;
@@ -10,8 +23,13 @@ body{
     left: -400px;
     display: flex;
     flex-flow: column;
+    align-items: center;
     transition: all 500ms;
     overflow-y: scroll;
+    row-gap: 20px;
+}
+#sidebar>*{
+    width: 95%;
 }
 
 #settings{
@@ -61,6 +79,10 @@ input, select{
     height: 25px;
 }
 
+.clickable:hover{
+    opacity: .7;
+    cursor: pointer;
+}
 
 /*Type Selection*/
 #type{
@@ -82,12 +104,17 @@ i:hover{
 .start{
     border: 2px solid green;
     border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 .start::before{
     color: green;
     position: relative;
-    left: 4px;
-    top:4px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 2px;
     font-size: 26px;
 }
 
@@ -118,13 +145,25 @@ i:hover{
 .location{
     border: 2px solid lightblue;
     border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    display: flex!important;
 }
 .location::before{
     color: lightblue;
     position: relative;
-    left: 8px;
-    top:6px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 2px;
     font-size: 26px;
+}
+
+.location>p{
+    text-align: center;
+    position: absolute;
+    margin-bottom: 0px;
 }
 .merge{
     border: 2px solid darkgray;
@@ -228,10 +267,20 @@ i:hover{
       column-gap: 20px;
   }
 
+  .button{
+    background-color: transparent;
+    border-radius: 5px;
+    transition: all 500ms;
+  }
   /* Button */
+  #buttons{
+      width:100%;
+      display: flex;
+      justify-content: space-evenly;
+      align-items: center;
+  }
   .reset-button{
-
-    padding: 5px 25px;
+    padding: 5px 20px;
       color: red;
       background-color: transparent;
       border: red solid 2px;
@@ -244,8 +293,7 @@ i:hover{
     border: red solid 2px;
   }
   .run-button{
-      margin-right: 20px;
-    padding: 5px 25px;
+    padding: 5px 20px;
     color: green;
     background-color: transparent;
     border: green solid 2px;
@@ -259,7 +307,7 @@ i:hover{
 }
 .clear-button{
 
-    padding: 5px 25px;
+    padding: 5px 20px;
       color: gray;
       background-color: transparent;
       border: gray solid 2px;
@@ -328,8 +376,10 @@ i:hover{
 }
 .row .start::before{
     font-size: 20px;
-    left: 2px;
-    top:3px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 2px;
     
 }
 .row .stop::before{
@@ -353,8 +403,10 @@ i:hover{
 }
 .row .location::before{
     font-size: 20px;
-    left: 6px;
-    top:4px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 2px;
     z-index: -1;
     
 }
@@ -366,7 +418,12 @@ i:hover{
     
 }
 
+#ports{
+    display: flex;
+    flex-direction: column
+    
 
+}
 
 /*Sorting specific classes*/
 #view_port{
@@ -401,7 +458,7 @@ i:hover{
     row-gap: 5px;
     column-gap: 5px;
     border: 1px solid black;
-    width: 1350px;
+    width: 1300px;
     height: 200px;
     z-index: -1;
     border-radius: 5px;
@@ -456,6 +513,13 @@ i:hover{
 
 
 /*Tree CSS */
+.dot{
+    position: absolute;
+    background-color: purple;
+    width: 3px;
+    height: 3px;
+    z-index: 10000;
+}
 .tree_levels{
     display: flex;
     flex-direction: row;
@@ -470,6 +534,7 @@ i:hover{
     border:solid black 1px;
     border-radius: 10px;
     padding: 20px;
+    justify-content: space-around;
 
 }
 
@@ -483,11 +548,14 @@ i:hover{
     background-color: white;
     z-index: 1;
 }
-
-.blank_node{
-
+.tree_node::after{
+    background-color: white;
 }
 
+
+.blank_node{
+    display: block;
+}
 .tree_edge{
     position: absolute;
     border:solid black 1px;
@@ -497,4 +565,160 @@ i:hover{
 .tree_line{
     stroke:red;
     stroke-width: 2px;
+}
+
+#tree_values{
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    column-gap: 30px;
+    align-items: center;
+    overflow: wrap!important;
+}
+
+#input_tree{
+    width:95%;
+    height: 100px;
+    text-align: start;
+}
+#add_root,#add_left,#add_right,#add_node{
+    display: flex;
+    flex-direction: column;
+}
+
+#input_left, #input_right,#input_root,#input_node{
+    width: 100px;
+}
+#add_left>button,#add_right>button,#add_root>button,#add_node>button{
+    width:100px;
+    border:1px solid black;
+    margin-top: 10px;
+
+}
+
+.node_clicked{
+    background-color: gray;
+}
+
+.node_active{
+    background-color: orange!important;
+}
+
+.node_visit{
+    background-color: lightcyan;
+}
+
+.node_clickable:hover{
+    background-color: gray;
+    cursor: pointer;
+}
+
+.node_value{
+    font-size: 15px;
+}
+
+/*Main Page CSS*/
+#main_body{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    row-gap: 100px;
+}
+#tile_body{
+    display: flex;
+    justify-content:center;
+    align-items: center;
+    flex-direction: row;
+    column-gap: 30px;
+}
+.tile{
+    border: 1px black solid;
+    border-radius: 5px;
+    box-shadow: 1px 0px 0px 1px gray ;
+    width: 225px;
+    height:250px;
+    display: flex;
+    row-gap: 30px;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+}
+.tile:active{
+    box-shadow: 0px 0px 0px 0px gray ;
+}
+.tile_view{
+    border: 1px black solid;
+    border-radius: 5px;
+    width: 175px;
+    height:100px;
+    display: flex;
+
+
+}
+
+.tile_title{
+    font-size: 20px;
+    text-align: center;
+    color: black;
+}
+/*Main Grid*/
+#tile_grid{
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+.main_row{
+    display: flex;
+    flex-direction: row;
+}
+.main_row>*{
+    width: 20px;
+    height: 20px;
+    border-radius: 3px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.main_row>.location::before,.main_row>.start::before{
+    font-size: 13px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 2px;
+}
+
+
+/*Main Sort*/
+#tile_sort{
+    flex-direction: row;
+    justify-content: center;
+    align-items: flex-end;
+}
+#s30,#s40,#s80,#s60,#s10,#s20,#s70{
+    width: 20px;
+    border: 1px solid black;
+    border-radius: 5px 5px 0px 0px;
+}
+#s30{
+    height: 30px;
+}
+#s80{
+    height: 80px;
+}
+#s60{
+    height: 60px;
+}
+#s40{
+    height: 40px;
+}
+#s10{
+    height: 10px;
+}
+#s20{
+    height: 20px;
+}
+#s70{
+    height: 70px;
 }

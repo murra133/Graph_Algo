@@ -491,8 +491,7 @@ function merge_sort(arr, l, r){
     for(let i = 0; i < sort_array.length; i++){
         animation_arr.push('l_'+i);
     }
-    animate_sort(animation_arr,0)
-    animation_arr=[];
+
 }
 
 function merge_sort1(arr, l, r){

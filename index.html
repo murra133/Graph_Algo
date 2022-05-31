@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Graphs</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <script src="https://kit.fontawesome.com/38a84518ea.js" crossorigin="anonymous"></script> 
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="script.js"></script>
+    <script src="graph.js"></script>
+    <script src="main.js"></script>
+    <script src="sort.js"></script>
+</head>
+<body id="main_body">
+<header>
+    <h1 id="title">
+        VisualAlgo
+    </h1>
+</header>
+<div id="tile_body" >
+    <a class="tile clickable" href="graph.html" onmouseleave="deanimate_tile('graph')" onmouseenter="animate_tile('graph')">
+        <div class="tile_view" id="tile_grid">
+            <div id="ygrid" value = "4"></div>
+            <div id = "xgrid" value = "5"></div>
+            <div class="main_row">
+                <i id="1_1" value = "1" class="fa-solid fa-house start"></i>
+                <div id="1_2" value = "1" class="nvisit"></div>
+                <div id="1_3" value = "1" class="nvisit"></div>
+                <div id="1_4" value = "1" class="nvisit"></div>
+                <div id="1_5" value = "1" class="nvisit"></div>
+            </div>
+            <div class="main_row">
+                <div id="2_1" value = "1" class="nvisit"></div>
+                <div id="2_2" value = "1" class="nvisit"></div>
+                <div id="2_3" value = "1" class="nvisit"></div>
+                <div id="2_4" value = "1" class="nvisit"></div>
+                <div id="2_5" value = "1" class="nvisit"></div>
+            </div>
+            <div class="main_row">
+                <div id="3_1" value = "1" class="nvisit"></div>
+                <div id="3_2" value = "1" class="nvisit"></div>
+                <div id="3_3" value = "1" class="nvisit"></div>
+                <div id="3_4" value = "1" class="nvisit"></div>
+                <div id="3_5" value = "1" class="nvisit"></div>
+            </div>
+            <div class="main_row">
+                <div id="4_1" value = "1" class="nvisit"></div>
+                <div id="4_2" value = "1" class="nvisit"></div>
+                <div id="4_3" value = "1" class="nvisit"></div>
+                <div id="4_4" value = "1" class="nvisit"></div>
+                <i id="4_5" value = "1" class="fa-solid fa-location-pin location"></i>
+            </div>
+        </div>
+        <h3 class="tile_title">Graph Algorithms<br>on Grid</h3>
+    </a>
+    <a class="tile clickable" href="sort.html" onmouseenter="animate_tile('sort')" onmouseleave="deanimate_tile('sort')">
+        <div class="tile_view" id="tile_sort">
+            <div id="s40" class="histo"></div>
+            <div id="s70" class="histo"></div>
+            <div id="s30" class="histo"></div>
+            <div id="s80" class="histo"></div>
+            <div id="s20" class="histo"></div>
+            <div id="s10" class="histo"></div>
+            <div id="s60" class="histo"></div>
+        </div>
+        <h3 class="tile_title">Sorting<br>Algorithms</h3>
+    </a>
+    <a  class="tile clickable">
+        <div class="tile_view">
+            <i class="fa-solid fa-person-digging"></i>
+        </div>
+        <h3 class="tile_title">Binary Tree<br>Data Structures</h3>
+    </a>
+
+</div>
+</body>
+</html>

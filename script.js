@@ -96,8 +96,8 @@ function speed_instant(checkbox){
 
 
 function clear_(){
-    did("stat_visit").innerHTML = 0;
-    did("stat_time").innerHTML = 0;
+    // did("stat_visit").innerHTML = 0;
+    // did("stat_time").innerHTML = 0;
     if(did("grid")!=null){
         removeAllChildNodes(did('grid'));
         grid_size()
@@ -108,6 +108,17 @@ function clear_(){
         removeAllChildNodes(did('data'))
         did("sort_values").value = ""
         array_val=[];
+    }
+    else if(did('tree')!=null){
+        removeAllChildNodes(did('tree'));
+        removeAllChildNodes(did('edges'));
+        let p = document.createElement("p");
+        p.innerHTML = "Add Nodes:";
+        let root = create_addNodes("root");
+        let tree_val = did("tree_values");
+        removeAllChildNodes(tree_val);
+        tree_val.appendChild(p);
+        tree_val.appendChild(root)
     }
 
 }

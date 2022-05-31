@@ -15,39 +15,55 @@
 </head>
 <body onresize="draw_edge()">
     <div id="view_port" width="1000" height="700">
-        <div id="tree"></div>
-        <div id="edges">
+        <div>
+            <div id="tree"></div>
+            <div id="edges">
+            </div>
+        </div>
+        <div id="count-view">
+            <h4>Print Line:</h4>
+            <p>Statement: <p id="statement"></p></p>
         </div>
     </div>
-    </div>
+
     <div id="settings" class="active" onclick="toggle_sidebar(this)">Settings</div>
     <div id ="sidebar" class="active">
-        <h3 id="algo_title">Naive Sort</h3>
-        <div id="random_vals">
-            <p>Randomnize Inputs:<br>
-                Quantity: <input  id ="n_nodes" value="15" placeholder="50" type="number" class = "random">
-                Range: <input id="range_low" value="1" placeholder="10" type="number" class = "random"> - <input id="range_high" value="20" placeholder="50" type="number" class = "random"></p>
-                <button class="run-button" onclick="randomnize_sort()">Randomnize</button>
-        </div>
+        <h3 id="algo_title">Binary tree</h3>
         <div id="select_algo">
-            <p>Select Algorithm:<br></p>
-            <select name="" id="" onchange="choose_sort(this)">
-                <option value="nv">Naive Sort</option>
-                <option value="qs">Quick Sort</option>
-                <option value="ms">Merge Sort</option>
-                <option value="is">Insertion Sort</option>
-                <option value="cs">Counting Sort</option>
-                <option value="bs">Bubble Sort</option>
-                <option value="hs">Heap Sort</option>
-                
+            <p>Select Data Structure:<br></p>
+            <select id="choose_tree" onchange="choose_data_structure(this)">
+                <option value="bt">Binary tree</option>
+                <option value="bst">Binary Search tree</option>
+                <option value="at">Avl tree</option>
+                <option value="hp">Heap</option>
             </select>
         </div>
-        <div id="input_values">
-            <p>Input values to be sorted separated by a comma (Example: 2,5,8):<br></p>
-            <div id="values">
-                <textarea type="text" id="sort_values" class="text_box" placeholder="1,5,8,7,6" oninput="visualize_sort()"></textarea>
-            </div>     
+        <div id="tree_values">
+            <p>Add Nodes:</p>
+            <div id="add_root" class="add_node">
+                <input type="text" id="input_root" >
+                <button class="button" onclick="add_node('root')">ADD ROOT</button>
+            </div>
         </div>
+        <div id ="tree_insertion">
+            <p>Input string of items to build tree (Items to be separated by a space, use comma to omit a node)</p>
+            <textarea type="text" id ="input_tree" oninput="buildtree(this)"></textarea>
+        </div>
+        <div id="tree_algo">
+            <p>Select Algorithm to Run:</p>
+            <select id="bt_algo" onchange="tree_algo(this)">
+                <!-- <option value="1">Left Rotate</option>
+                <option value="2">Right Rotate</option> -->
+                <option value="pre"> Pre-Order Traversal</option>
+                <option value="in"> In-Order Traversal</option>
+                <option value="post">Post-Order Traversal</option>
+                <option value="level">Level-Order Traversal</option>
+            </select>
+        </div>
+
+    </div>
+    <diV id ="controls">
+        <h3>Controls:</h3>
         <div id="visual_toggle">
             <p>Do you want the Algorithm to be Visual?</p>
             <label class="switch">
@@ -55,19 +71,16 @@
                 <span class="slider round"></span>
               </label>
               <label class="speed">
-                  <input oninput="speed_change(this)" type ="range" id="speed" min="1" max="200" value="20">
+                  <input oninput="speed_change(this)" type ="range" id="speed" min="1" max="2000" value="20">
                   <p id="speed_val">20ms</p>
               </label>
-              
         </div>
         <div id = "buttons">
-            <button onclick="draw_tree()" class="run-button">Run</button>
+            <button onclick="talgo('pre')" id="run" class="run-button">Run</button>
             <button class="reset-button" onclick="draw_edge()">Reset</button>
             <button class="clear-button" onclick="clear_()">Clear</button>
-
-
         </div>
-    </div>
+    </diV>
 </body>
 <footer>
 </footer>
