@@ -315,12 +315,12 @@ function add_type_constant(current_loc){
 
 function create_visit_parent_map(){
     if(did('ygrid').tagName=="INPUT"){
-    let gridx = parseInt(did('xgrid').value)
-    let gridy = parseInt(did('ygrid').value);
+    var gridx = parseInt(did('xgrid').value)
+    var gridy = parseInt(did('ygrid').value);
     }
     else{
-        gridy = vle(did('ygrid'))
-        gridx = vle(did('xgrid'))
+       var gridy = vle(did('ygrid'))
+        var gridx = vle(did('xgrid'))
     }
     let mapv = {}
     let mapp = {}

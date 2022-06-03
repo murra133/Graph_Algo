@@ -12,8 +12,37 @@ function get_left_child(location){
     ///Location of node as int///
     return location*2;
 }
+function child_defined(side,loc){
+    //l = left, r= right;
+    if(side=="l"){
+        if(tree[get_left_child(loc)]==null||tree[get_left_child(loc)]==undefined){
+            return false;
+        }
+    }
+    else{
+        if(tree[get_right_child(loc)]==null||tree[get_right_child(loc)]==undefined){
+            return false;
+        }
+    }
+    return true;
+}
 function get_parent(location){
     return Math.floor(location/2)
+}
+
+function get_all_children(loc,array){
+    if(tree[loc]==null){
+        return array
+    }
+    array.push(tree[loc]);
+    tree[loc]=null;
+    if(child_defined("l",loc)){
+        array = get_all_children(get_left_child(loc),array);
+    }
+    if(child_defined("r",loc)){
+        array = get_all_children(get_right_child(loc),array);
+    }
+    return array;
 }
 ///Functions to draw a tree///
 function tree_width(height){
@@ -26,6 +55,16 @@ function tree_width(height){
         width[i] = width[i-1]*2;
     }
     return width[height-1];
+}
+
+function concat_tree(){
+    let string = "";
+    for(let i =1;i<tree.length-1;i++){
+        if(tree[i]!=null){
+            string = string+tree[i]+" "
+        }
+    }
+    return string+tree[tree.length-1];
 }
 
 function tree_height(tree_length){
@@ -191,33 +230,33 @@ function draw_edge(){
 function remove_tree(){
     removeAllChildNodes(did('tree'));
     removeAllChildNodes((did('edges')))
+    removeAllChildNodes((did('balance')))
 }
 
 
 function choose_data_structure(input){
     let dt = input.value;
+    tree=[-1,null];
+    did("input_tree").value="";
     remove_tree()
-    if(dt=="bst"){
-        let insert_div = did("tree_values")
-        let insert_node = document.createElement("div");
-        insert_node.id = "add_node"
-        insert_node.className = "add_node"
-        let new_insert = document.createElement("input");
-        new_insert.id = "input_node";
-        new_insert.setAttribute("type","text");
-        let button_insert = document.createElement("button");
-        button_insert.className = "button";
-        button_insert.setAttribute("onclick","add_node('bst')");
-        button_insert.innerHTML = "Add Node"
-        let p = document.createElement("p");
-        p.innerHTML = "Add Nodes:"
-        removeAllChildNodes(insert_div);
+    let insert_div = did("tree_values")
+    removeAllChildNodes(insert_div);
+    let tree_algo = did("tree_algo");
+    let algo_input = did("bt_algo");
+    let p = document.createElement("p");
+    p.innerHTML = "Add Nodes:"
+    let palgo = document.createElement("p");
+    palgo.innerHTML = "Select Algorithm to Run";
+    if(dt=="bst"||dt=="avl"){
+        if(dt=="avl"){
+            did("algo_title").innerHTML = "AVL Tree"
+        }
+        else{
+            did("algo_title").innerHTML = "Binary Search Tree"
+        }
+        let insert_node = create_addNodes("node",dt);
         insert_div.appendChild(p);
         insert_div.appendChild(insert_node);
-        insert_node.appendChild(new_insert);
-        insert_node.appendChild(button_insert);
-        let tree_algo = did("tree_algo");
-        let algo_input = did("bt_algo");
         removeAllChildNodes(algo_input);
         let select_find = document.createElement("option");
         select_find.value = "bst_find";
@@ -230,12 +269,40 @@ function choose_data_structure(input){
         let input_tag = document.createElement("input");
         input_tag.setAttribute("type","text");
         input_tag.id = "bst_input";
+        removeAllChildNodes(tree_algo);
+        tree_algo.appendChild(palgo);
+        tree_algo.appendChild(algo_input)
         tree_algo.appendChild(input_tag)
+        did("run").setAttribute("onclick","talgo('bst_find')")
     }
-    else if(dt==""){
-
+    else if(dt=="bt"){
+        did("algo_title").innerHTML = "Binary Tree"
+        let root = create_addNodes("root","root");
+        insert_div.appendChild(p);
+        insert_div.appendChild(root)
+        let select = algo_input.cloneNode(true);
+        removeAllChildNodes(select);
+        let pret = document.createElement("option");
+        pret.value = "pre";
+        pret.innerHTML = "Pre-Order Traversal"
+        let int = document.createElement("option");
+        int.value = "in";
+        int.innerHTML = "In-Order Traversal";
+        let post = document.createElement("option");
+        post.value = "post";
+        post.innerHTML = "Post-Order Traversal"
+        let levt = document.createElement("option");
+        levt.value = "level";
+        levt.innerHTML = "Level-Order Traversal";
+        select.appendChild(pret);
+        select.appendChild(int);
+        select.appendChild(post);
+        select.appendChild(levt);
+        removeAllChildNodes(tree_algo);
+        tree_algo.appendChild(palgo);
+        tree_algo.appendChild(select);
+        did("run").setAttribute("onclick","talgo('pre')")
     }
-
 }
 ///End of Functions to draw a tree///
 
@@ -255,16 +322,16 @@ function select_node(id){
         selected_node = id;
     }
 }
-function create_addNodes(side){
+function create_addNodes(id,side){
     let add = document.createElement('div')
-    add.id = "add_"+side
+    add.id = "add_"+id
     let input = document.createElement('input');
-    input.id = "input_"+side;
+    input.id = "input_"+id;
     input.setAttribute("type","text");
     let button = document.createElement("button")
     button.setAttribute("onclick","add_node('"+side+"')");
     button.className = "button";
-    button.innerHTML = "ADD "+side.toUpperCase();
+    button.innerHTML = "ADD "+id.toUpperCase();
     add.appendChild(input);
     add.appendChild(button);
 
@@ -284,14 +351,23 @@ function add_root(){
     removeAllChildNodes(tree_val)
     let p = document.createElement("p");
     p.innerHTML = "Add Nodes:"
-    let add_left = create_addNodes("left");
-    let add_right = create_addNodes("right");
+    let add_left = create_addNodes("left","left");
+    let add_right = create_addNodes("right","left");
     tree_val.appendChild(p);
     tree_val.appendChild(add_left);
     tree_val.appendChild(add_right);
     select_node("n_1")
 
 
+}
+
+function resize_tree(){
+    let new_tree = Array(len*2).fill(null);
+    new_tree[0]=-1;
+    for(let i =1;i<(len);i++){
+        new_tree[i] = tree[i];
+    }
+    tree = new_tree
 }
 
 function add_node(position){
@@ -301,6 +377,11 @@ function add_node(position){
         remove_tree();
         draw_tree()
         return
+    }
+    if(position=="avl"){
+        insert_bst(did("input_node").value);
+        remove_tree();
+        draw_tree()
     }
     if(position=="root"){
         add_root();
@@ -371,7 +452,7 @@ function delete_node(node){
     if(position==1){
         let p = document.createElement("p");
         p.innerHTML = "Add Nodes:";
-        let root = create_addNodes("root");
+        let root = create_addNodes("root","root");
         let tree_val = did("tree_values");
         removeAllChildNodes(tree_val);
         tree_val.appendChild(p);
@@ -403,7 +484,24 @@ function buildtree(input){
         remove_tree();
         draw_tree();
         return
-
+    }
+    if(did("choose_tree").value=="avl"){
+        tree=[];
+        for(let i=0;i<values.length;i++){
+            let array =[[],[]];
+            insert_bst(values[i]);
+            array = get_balance_heights(array,1);
+            for(let i = tree.length-1;i>0;i--){
+                if(array[0][i]==2||array[0][i]==-2){
+                    rebalance_tree(array[0],i);
+                    break;
+                }
+            }
+        }
+        remove_tree();
+        draw_tree();
+        draw_heights();
+        return
     }
     if(values.length==1 && did("input_root")!=undefined){
         did("input_root").value=values[0];
@@ -539,7 +637,14 @@ function talgo(traversal){
     else if(traversal=="level"){
         level_order_traversal(1);
     }
+    else if(traversal=="bst_find"){
+        bst_find();
+    }
+    else if(traversal=="bst_del"){
+        bst_del();
+    }
 
+    did("input_tree").value = concat_tree();
     animate_tree(0,animation_array);
     animation_array = [];
 
@@ -627,11 +732,11 @@ function level_order_traversal(loc){
 //////////////////////////////////////////////////
 function getint(string){
     let val;
-    if(isNaN(parseInt(string))){
+    if(isNaN(parseFloat(string))){
         val = string.charCodeAt(0)
     }
     else{
-        val = parseInt(string)
+        val = parseFloat(string)
     }
     return val;
 }
@@ -672,6 +777,254 @@ function insert_bst(input){
             }
         }
     }
+}
+
+function bst_find(){
+    let val = did("bst_input").value;
+    let intval = getint(val);
+    let curr = 1;
+    let curr_val = getint(tree[curr]);
+    while(curr_val!=intval&&(intval<curr_val||intval>curr_val)){
+        if(intval<curr_val){
+            curr = get_left_child(curr);
+        }
+        else{
+            curr = get_right_child(curr);
+        }
+        curr_val = getint(tree[curr]);
+    }
+    if(curr_val==intval){
+        did("n_"+curr).classList.add("node_clicked");
+        return curr;
+    }
+    return 0;
+}
+
+function parseAllChildsUp(deleted_loc){
+    ///Moves all children up for a deleted node///
+    let parent = get_parent(deleted_loc);
+    ///If left is tree is deleted
+    let curr = deleted_loc;
+    if(child_defined("l",curr)){
+        while(child_defined("l",curr)){
+            tree[curr] = tree[get_left_child(curr)];
+            curr = get_left_child(curr);
+            tree[curr] = null;
+        }
+    }
+    else if(child_defined("r",curr)){
+        while(child_defined("r",curr)){
+            tree[curr] = tree[get_right_child(curr)];
+            curr = get_right_child(curr);
+            tree[curr] = null;
+        }
+    }
+
+}
+function bst_del(){
+    let curr = bst_find();
+    if(curr==0){
+        return;
+    }
+    ///Delete Left///
+    if(getint(tree[curr])<getint(tree[1])){
+        if(tree[get_left_child(curr)]==null||tree[get_left_child(curr)]==undefined){
+            ncurr = get_right_child(curr);
+            while(tree[get_left_child(ncurr)]!=null&&tree[get_left_child(ncurr)]!=undefined){
+                ncurr = get_left_child(ncurr);
+            }
+        }
+        else{
+            ncurr = get_left_child(curr);
+            while(tree[get_right_child(ncurr)]!=null&&tree[get_right_child(ncurr)]!=undefined){
+                ncurr = get_right_child(ncurr);
+            }
+        }
+        temp = tree[ncurr];
+        tree[ncurr] = tree[curr];
+        tree[curr] = temp;
+        tree[ncurr] = null;
+        parseAllChildsUp(ncurr);
+    }
+        ///Delete Right///
+        if(getint(tree[curr])>=getint(tree[1])){
+            if(tree[get_right_child(curr)]==null||tree[get_right_child(curr)]==undefined){
+                ncurr = get_left_child(curr);
+                while(tree[get_right_child(ncurr)]!=null&&tree[get_right_child(ncurr)]!=undefined){
+                    ncurr = get_right_child(ncurr);
+                }
+            }
+            else{
+                ncurr = get_right_child(curr);
+                while(tree[get_left_child(ncurr)]!=null&&tree[get_left_child(ncurr)]!=undefined){
+                    ncurr = get_left_child(ncurr);
+                }
+            }
+            temp = tree[ncurr];
+            tree[ncurr] = tree[curr];
+            tree[curr] = temp;
+            tree[ncurr] = null;
+            parseAllChildsUp(ncurr);
+        }
+        remove_tree();
+        draw_tree();
+}
 
 
+
+///////////////////////////////////////////////////////////////////////////
+/* AVL Trees */
+///////////////////////////////////////////////////////////////////////
+function left_roation(curr){
+    let left = get_left_child(curr);
+    let right = get_right_child(curr);
+    let right2 = get_right_child(right);
+    let children = [];
+    let temp = curr;
+    while(child_defined("l",temp)){
+        children = get_all_children(get_left_child(temp),children);
+        if(child_defined("r",temp)){
+            temp = get_right_child(temp);
+        }
+        else{
+            break;
+        }
+    }
+    tree[left] = tree[curr];
+    tree[curr] = tree[right];
+    tree[right] = tree[right2];
+    tree[right2] = null;
+    parseAllChildsUp(right2)
+    children.forEach(child=>{
+        insert_bst(child)
+    })
+}
+function right_roation(curr){
+    let left = get_left_child(curr);
+    let right = get_right_child(curr);
+    let left2 = get_left_child(left);
+    let children = [];
+    let temp = curr;
+    while(child_defined("r",temp)){
+        children = get_all_children(get_right_child(temp),children);
+        if(child_defined("l",temp)){
+            temp = get_left_child(temp);
+        }
+        else{
+            break;
+        }
+    }
+    tree[right] = tree[curr];
+    tree[curr] = tree[left];
+    tree[left] = tree[left2];
+    tree[left2] = null;
+    parseAllChildsUp(left2)
+    children.forEach(child=>{
+        insert_bst(child)
+    })
+}
+
+function right_left_rotation(curr){
+    console.log("Right Left Rotation")
+    let right = get_right_child(curr);
+    let right_left = get_left_child(right);
+    let right2 = get_right_child(right);
+    if(right2>(tree.length-1)){
+        resize_tree();
+    }
+    tree[right2]=tree[right];
+    tree[right] = tree[right_left];
+    tree[right_left]=null;
+    left_roation(curr);
+}
+
+function left_right_rotation(curr){
+    let left = get_left_child(curr);
+    let left_right = get_right_child(left);
+    let left2 = get_left_child(left);
+    if(left2>(tree.length-1)){
+        resize_tree();
+    }
+    tree[left2]=tree[left];
+    tree[left] = tree[left_right];
+    tree[left_right]=null;
+    right_roation(curr);
+}
+
+function rebalance_tree(b_array,curr){
+    console.log(tree[curr])
+    //Left Rotation//
+    if(b_array[curr]>=2&&b_array[get_right_child(curr)]==1){
+        left_roation(curr);
+    }
+    //Right Rotation//
+    else if(b_array[curr]<=-2&&b_array[get_left_child(curr)]==-1){
+        right_roation(curr);
+    }
+    //Right Left Rotation//
+    else if(b_array[curr]>=2&&b_array[get_right_child(curr)]==-1){
+        right_left_rotation(curr);
+    }
+    //Left Right Rotation
+    else if(b_array[curr]<=-2&&b_array[get_left_child(curr)]==1){
+        left_right_rotation(curr);
+    }
+}
+
+function get_balance_heights(bh_array,curr){
+    ///Takes in an empty array of size tree and the current location in int///
+    if(child_defined("l",curr)){
+        bh_array = get_balance_heights(bh_array,get_left_child(curr))
+    }
+    if(child_defined("r",curr)){
+        bh_array = get_balance_heights(bh_array,get_right_child(curr));
+    }
+    let b_array=bh_array[0];
+    let h_array=bh_array[1];
+    if(child_defined("l",curr)&&child_defined("r",curr)){
+        h_array[curr] = Math.max(h_array[get_right_child(curr)],h_array[get_left_child(curr)])+1;
+        b_array[curr] = h_array[get_right_child(curr)] - h_array[get_left_child(curr)];
+    }
+    else if(child_defined("l",curr)){
+        h_array[curr] = h_array[get_left_child(curr)]+1;
+        b_array[curr] = - h_array[get_left_child(curr)];
+    }
+    else if(child_defined("r",curr)){
+        h_array[curr] = h_array[get_right_child(curr)]+1;
+        b_array[curr] = h_array[get_right_child(curr)];
+    }
+    else{
+        h_array[curr] = 1;
+        b_array[curr] = 0;
+    }
+    return bh_array;
+
+}
+
+function draw_heights(){
+    let bdiv = document.createElement("p");
+    bdiv.className="avl_balance";
+    let balance = Array(tree.length).fill(null);
+    let heights = Array(tree.length).fill(null);
+    let arrays = [balance,heights]
+    arrays = get_balance_heights(arrays,1);
+    balance = arrays[0];
+    heights = arrays[1];
+    let node_size = parseInt(document.getElementsByClassName('tree_node')[0].offsetWidth)/2;
+    let balance_div = did("balance");
+    for(let i=0;i<balance.length;i++){
+        if(balance[i]!=null){
+            let clone = bdiv.cloneNode(true);
+            clone.innerHTML = balance[i];
+            clone.id = "b_"+i;
+            let offset = get_offset(did("n_"+i));
+            if(getint(tree[i])>=getint(tree[1])){
+                clone.setAttribute("style","right:"+(-offset.right-node_size/2)+"px; top:"+(offset.top-node_size/2)+"px");
+            }
+            else{
+                clone.setAttribute("style","left:"+(offset.left-node_size/2)+"px; top:"+(offset.top-node_size/2)+"px");
+            }
+            balance_div.appendChild(clone);
+        }
+    }
 }

@@ -617,6 +617,11 @@ i:hover{
     font-size: 15px;
 }
 
+.avl_balance{
+    position: absolute;
+    z-index: 10000;
+}
+
 /*Main Page CSS*/
 #main_body{
     display: flex;
