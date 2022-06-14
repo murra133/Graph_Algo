@@ -16,7 +16,11 @@
 <body onresize="draw_edge()">
     <div id="view_port" width="1000" height="700">
         <div>
-            <div id="tree"></div>
+            <div id="tree">
+                <div class="tree_levels" id="l_0">
+                    <div class="blank_node" id="n_1" onclick="select_node('n_1')"></div>
+                </div>
+            </div>
             <div id="edges"></div>
             <div id="balance"></div>
         </div>
@@ -35,7 +39,7 @@
                 <option value="bt">Binary tree</option>
                 <option value="bst">Binary Search tree</option>
                 <option value="avl">Avl tree</option>
-                <option value="hp">In the Works</option>
+                <option value="hp">Heaps</option>
             </select>
         </div>
         <div id="tree_values">

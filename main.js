@@ -18,6 +18,12 @@ function animate_tile(tile){
         a_sort(animation_arr,0)
         animation_arr = [];
     }
+    if(tile=="tree"){
+        let array = get_balance_heights([[],[]],1);
+        rebalance_tree(array[0],1);
+        animate_tree(0,animation_array);
+        animation_array = []
+    }
 }
 
 function deanimate_tile(tile){
@@ -28,6 +34,39 @@ function deanimate_tile(tile){
     if(tile=="sort"){
         let sequence = ["ds-s40","ds-s70","ds-s30","ds-s80","ds-s20","ds-s10","ds-s60"]
         deanimate(sequence,0);
+    }
+    if(tile=="tree"){
+        let r1 = Math.floor(Math.random() * 2);
+        let r2 = Math.floor(Math.random() * 2);
+        let p1 = get_left_child(1);
+        if(r1==1){
+            p1 = get_right_child(1);
+        }
+        let p2=get_left_child(p1);
+        if(r2==1){
+            p2 = get_right_child(p1)
+        }
+
+        tree = Array(8).fill(null);
+        tree[0]=-1;
+        tree[1] = "";
+        tree[p1] = "";
+        tree[p2]="";
+        remove_tree();
+        draw_tree();
+        let bn = qsa(".blank_node");
+        let tn = qsa(".tree_node")
+        did("tree").setAttribute("style","width:175px;height:100px")
+        bn.forEach(child=>{
+            child.setAttribute("style","width:22px;height:22px");
+        })
+        tn.forEach(child=>{
+            child.setAttribute("style","width:22px;height:22px");
+        })
+        draw_edge();
+
+
+        let sequence = [""]
     }
 
 }

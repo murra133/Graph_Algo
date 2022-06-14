@@ -13,12 +13,16 @@
     <script src="graph.js"></script>
     <script src="main.js"></script>
     <script src="sort.js"></script>
+    <script src="tree.js"></script>
+
 </head>
-<body id="main_body">
+<body id="main_body" onresize="draw_edge()">
 <header>
     <h1 id="title">
         VisualAlgo
     </h1>
+    <br>
+    <p>Last Updated:6/3/22</p>
 </header>
 <div id="tile_body" >
     <a class="tile clickable" href="graph.html" onmouseleave="deanimate_tile('graph')" onmouseenter="animate_tile('graph')">
@@ -68,13 +72,44 @@
         </div>
         <h3 class="tile_title">Sorting<br>Algorithms</h3>
     </a>
-    <a  class="tile clickable" href="tree.html">
+    <a  class="tile clickable" href="tree.html" onmouseenter="animate_tile('tree')" onmouseleave="deanimate_tile('tree')">
         <div class="tile_view">
-            <i class="fa-solid fa-person-digging"></i>
+            <div id = "tree" style = "width:175px;height:100px">
+                <div class="tree_levels" id="l_0">
+                    <div style="width:22px;height:22px" class="tree_node" id="n_1"></div>
+                </div>
+                <div class="tree_levels" id="l_1">
+                    <div style="width:22px;height:22px" class="blank_node" id="n_2"></div>
+                    <div style="width:22px;height:22px" class="tree_node" id="n_3"></div>
+                </div>
+                <div class="tree_levels" id="l_2">
+                    <div style="width:22px;height:22px" class="blank_node" id="n_4"></div>
+                    <div style="width:22px;height:22px" class="blank_node" id="n_5"></div>
+                    <div style="width:22px;height:22px" class="tree_node" id="n_6"></div>
+                    <div style="width:22px;height:22px" class="blank_node" id="n_7"></div>
+                </div>
+            </div>
+            <div id="edges">
+                
+            </div>
+            <div id="balance">
+
+            </div>
         </div>
         <h3 class="tile_title">Binary Tree<br>Data Structures</h3>
     </a>
+    <a  class="tile clickable" href="graph_on_nodes.html" >
+        <div class="tile_view">
+            <i class="fa-solid fa-person-digging"></i>
+        </div>
+        <h3 class="tile_title">Graph Algorithms<br>on Nodes</h3>
+    </a>
 
 </div>
+
 </body>
+<script>
+    tree = [-1,1,null,1,null,null,1,null]
+    draw_edge();
+</script>
 </html>

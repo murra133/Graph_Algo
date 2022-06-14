@@ -1,0 +1,34 @@
+/*Graph on Nodes*/
+
+#node_grid{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    align-items: center;
+    border: 1px solid black;
+}
+.gn-node_row{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    align-items: baseline;
+    column-gap: 30px;
+}
+.gn-blank_node{
+    border-radius: 50%;
+    border: 1px solid black;
+    opacity: .05;
+}
+.gn-blank_node:hover{
+    opacity: 1;
+    cursor:pointer;
+}
+.gn-select_node{
+    border-radius: 50%;
+    border: 1px solid black;
+    opacity: 1;
+}
+.gn-select_node:hover{
+    opacity: 1;
+    cursor:pointer;
+}

@@ -7,24 +7,34 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Graphs</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="graph_on_nodes.css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <script src="https://kit.fontawesome.com/38a84518ea.js" crossorigin="anonymous"></script> 
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
     <script src="script.js"></script>
-    <script src="graph.js"></script>
+    <script src="graph_on_nodes.js"></script>
 </head>
 <body>
-    <div id="grid">
-        <div id="r1" class="row">
-            <div id="1_1" class="nvisit" value='1' onclick="add_type(this)">
-            </div>
-        </div>
-    </div>
+    <div id="view_port">
+        <div id="node_grid" onclick="setNode()" onmousemove="draw_node()"></div>
+        <svg id="gn-svg">
+            <circle cx="500" cy="500" r="2"></circle>
+        </svg>
     <div id="settings" class="active" onclick="toggle_sidebar(this)">Settings</div>
     <div id ="sidebar" class="active">
         <h3 id="algo_title">Breadth First Search</h3>
         <div id="select_grid">
-            <p>Select Grid Size:<br><input onchange = "grid_size()" id ="xgrid" value="20" max="100" min="1" type="number" class = "grid">X<input id ="ygrid" onchange = "grid_size()" value="20" type="number" max="100" min="1" class = "grid"></p>
+            <p>Select Node Size:<br><input onchange = "draw_grid()" id ="node_size" value="80" max="100" min="20" type="number" class = "grid"> px</p>
+        </div>
+        <div id="select_type">
+            <p>Select Grid Type:<br></p>
+            <div id="type">
+                <i class="fa-solid fa-house start" id="start" onclick="create_node(this)"></i>
+                <i class="fa-solid fa-circle-minus stop" id="stop_sign" onclick="deleteNode(this)"></i>
+                <i class="fa-solid fa-tree slow" id="slow" onclick="create_edge(this)"></i>
+                <i class="fa-solid fa-location-pin location" id="location" onclick="select_type(this)"></i>
+                <i class="fa-solid fa-road merge" id="merge" onclick="select_type(this)"></i>
+            </div>     
         </div>
         <div id="select_algo">
             <p>Select Algorithm:<br></p>
@@ -36,21 +46,6 @@
                 <option value="astar">A* Algorithm</option>
                 <option value="best_algo">Auto Detect Best Algorithm</option>
             </select>
-        </div>
-        <div id="select_type">
-            <p>Select Grid Type:<br></p>
-            <div id="type">
-                <i class="fa-solid fa-house start" id="start" onclick="select_type(this)"></i>
-                <i class="fa-solid fa-circle-minus stop" id="stop_sign" onclick="select_type(this)"></i>
-                <i class="fa-solid fa-tree slow" id="slow" onclick="select_type(this)"></i>
-                <i class="fa-solid fa-location-pin location" id="location" onclick="select_type(this)"></i>
-                <i class="fa-solid fa-road merge" id="merge" onclick="select_type(this)"></i>
-            </div>     
-        </div>
-        <div id="grid_length">
-            <p> Blank Grid Length:<input oninput="length_change(this)" id = "blank_l" type="number" value="2" min="0"> </p><br>
-            <p> Road Grid Length: <input oninput="length_change(this)" id = "road_l" type="number" value="0.5" min="0"></p><br>
-            <p> Forest Grid Length:<input oninput="length_change(this)" id = "forest_l" type="number" value="10" min="0"> </p><br>
         </div>
         <div id="stats">
             <h5>Stats:<br></h5>
@@ -76,12 +71,16 @@
         <div id = "buttons">
             <button onclick="choose_algo('bfs')" class="run-button">Run</button>
             <button class="reset-button" onclick="reset()">Reset</button>
-            <button class="clear-button" onclick="clear_()">Clear</button>s
+            <button class="clear-button" onclick="clear_()">Clear</button>
         </div>
     </diV>
+
 </body>
 <footer>
     <script>
-        grid_size()
+        window.addEventListener('mousemove',function(e){
+            window.mousey = e.clientY;
+            window.mousex = e.clientX;
+        });
     </script>
 </footer>

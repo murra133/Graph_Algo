@@ -112,13 +112,18 @@ function clear_(){
     else if(did('tree')!=null){
         removeAllChildNodes(did('tree'));
         removeAllChildNodes(did('edges'));
-        let p = document.createElement("p");
-        p.innerHTML = "Add Nodes:";
-        let root = create_addNodes("root");
-        let tree_val = did("tree_values");
-        removeAllChildNodes(tree_val);
-        tree_val.appendChild(p);
-        tree_val.appendChild(root)
+        removeAllChildNodes(did('balance'))
+        did("input_tree").value="";
+        if(did("choose_tree").value=="bt"){
+            let p = document.createElement("p");
+            p.innerHTML = "Add Nodes:";
+            let root = create_addNodes("root","root");
+            let tree_val = did("tree_values");
+            removeAllChildNodes(tree_val);
+            tree_val.appendChild(p);
+            tree_val.appendChild(root)
+        }
+
     }
 
 }

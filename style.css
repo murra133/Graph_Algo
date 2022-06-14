@@ -36,7 +36,7 @@ body{
     padding: 10px 25px;
     border-radius: 5px;
     border: 2px solid rgb(206, 233, 252);
-    z-index: -1;
+    z-index: 50;
     color: rgb(206, 233, 252);
     position: absolute;
     left:10px;
@@ -547,7 +547,22 @@ i:hover{
     margin: 2px;
     background-color: white;
     z-index: 1;
+    height: 40px;
+    width: 40px;
 }
+.tree_node_index{
+    border:solid black 1px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content:center;
+    margin: 2px;
+    background-color: white;
+    z-index: 1;
+    height: 22px;
+    width: 22px;
+}
+
 .tree_node::after{
     background-color: white;
 }
@@ -555,6 +570,8 @@ i:hover{
 
 .blank_node{
     display: block;
+    width: 40px;
+    height: 40px;
 }
 .tree_edge{
     position: absolute;
@@ -620,6 +637,7 @@ i:hover{
 .avl_balance{
     position: absolute;
     z-index: 10000;
+    font-size: 12px;
 }
 
 /*Main Page CSS*/
@@ -658,6 +676,8 @@ i:hover{
     width: 175px;
     height:100px;
     display: flex;
+    justify-content: center;
+    align-items: center;
 
 
 }
@@ -726,4 +746,21 @@ i:hover{
 }
 #s70{
     height: 70px;
+}
+
+
+/*Graph on Nodes*/
+.gn-select_node{
+    position: absolute;
+    background-color: transparent;
+}
+
+.gn-svg{
+    position: absolute;
+    z-index: -100;
+}
+
+path{
+
+    z-index: -90 ;
 }
