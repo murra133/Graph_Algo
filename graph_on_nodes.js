@@ -6,11 +6,8 @@ class graph{
 
     addNode(node1){
         this.grid.push(node1.duplicateNode());
-        console.log(this.grid)
         this.grid[this.grid.length-1].setIndex(this.grid.length-1);
         this.div.appendChild(this.grid[this.grid.length-1].getDiv())
-        console.log(mousex,mousey);
-        console.log(this.grid[this.grid.length-1].getPosition());
     }
     getNewId(){
         return this.grid.length
@@ -25,7 +22,6 @@ class graph{
         let new_grid = [];
         let i =0;
         while(0<this.grid.length){
-            console.log(index)
             if(i<index){
                 new_grid.push(this.grid.shift());
                 new_grid[i].setIndex(i);
@@ -37,7 +33,6 @@ class graph{
             else{
                 let node = this.grid.shift()
                 node.deleteNode();
-                console.log("deleting")
             }
             i++;
 
@@ -89,55 +84,50 @@ class edge{
         if(y1>y2){
             theta = Math.atan((y1-y2)/(x1-x2));
             if(x1>x2){
-                theta = Math.atan((y1-y2)/(x1-x2));
+                console.log("y1>y2 x1>x2");
+                theta = Math.PI-theta;
             }
             else{
-                theta = Math.atan((y1-y2)/(x2-x1));
+                console.log("y1>y2 x2>x1");
+                theta = theta*-1
+                // theta = Math.atan((y1-y2)/(x2-x1));
             }
+            if (theta<0){
+                theta = theta+Math.PI*2;
+            }
+            var alpha1 = theta +5*Math.PI/6;
+            var alpha2 = alpha1 +Math.PI/6;
+
         }
         else{
-            theta = Math.atan((y1-y2)/(x1-x2));
+            theta = Math.atan((y2-y1)/(x1-x2))+Math.PI;
             if(x1>x2){
-                theta = Math.atan((y2-y1)/(x1-x2));
+                console.log("y2>y1 x1>x2");
             }
             else{
-                theta = Math.atan((y2-y1)/(x2-x1));
+                console.log("y2>y1 x2>x1");
+                theta = Math.atan((y2-y1)/(x1-x2));
+                // theta = Math.atan((y2-y1)/(x2-x1));
             }
+            if (theta<0){
+                theta = theta+Math.PI*2;
+            }
+            var alpha1 = theta - 7*Math.PI/6;
+            var alpha2 = alpha1 + Math.PI/6;
         }
+
+
+        let M = (x1+this.node1.getNodeSize()/2*Math.cos(-theta))+" "+(y1+this.node1.getNodeSize()/2*Math.sin(-theta));
+        let Lx = (x2+this.node2.getNodeSize()/2*Math.cos(Math.PI-theta))
+        let Ly = (y2+this.node2.getNodeSize()/2*Math.sin(Math.PI-theta))
+        let arrow = "L"+(Lx+  Math.cos(alpha1)*30)+" "+(Ly-Math.sin(alpha1)*30)+" L"+Lx +" "+Ly+"L"+(Lx-Math.cos(alpha2)*30)+" "+(Ly-Math.sin(alpha2)*30)
         this.div = document.createElementNS('http://www.w3.org/2000/svg',"path"); 
         this.div.setAttribute("stroke","black");
         this.div.setAttribute("stroke-width","3");
         this.div.setAttribute("fill","transparent");
         this.div.id = this.id;
-        console.log(this.node2.getAllEdges())
-        if(this.node2.isEdgeExist(back_id)!=false){
-            ///draw dual///
-
-            let px = 1+deltax/(deltax+deltay)
-            let py = 2-px;
-            let midx = deltax/2+Math.min(x1,x2);
-            let midy = deltay/2+Math.min(y1,y2)
-            let q1 = (midx+deltay/10)+" "+(midy+deltax/10)
-            let q2 = (midx-deltay/10)+" "+(midy-deltax/10)
-            console.log(x1)
-            console.log(x2)
-            console.log(y1)
-            console.log(y2)
-            console.log(deltax)
-            console.log(deltay)
-            console.log(midx)
-            console.log(midy)
-            console.log(q1)
-            console.log(q2)
-            let edge_opp = this.node2.isEdgeExist(back_id).getDiv();;
-            edge_opp.setAttribute("d","M"+x2+" "+y2+", Q"+q2+" "+x1+" "+y1)
-            this.div.setAttribute("d","M"+x1+" "+y1+", Q"+q1+" "+x2+" "+y2);
-        }
-        else{
-            ///draw single///
-            this.div.setAttribute("d","M"+(x1+this.node1.getNodeSize()/2*Math.cos(-theta))+" "+(y1+this.node1.getNodeSize()/2*Math.sin(-theta))+", L"
-            +(x2+this.node2.getNodeSize()/2*Math.cos(Math.PI-theta))+" "+(y2+this.node2.getNodeSize()/2*Math.sin(Math.PI-theta)));
-        }
+        this.div.setAttribute("d","M"+M+", L"+Lx+" "+Ly+arrow);
+        console.log(theta*180/Math.PI)
         did("gn-svg").appendChild(this.div)
 
     }
@@ -245,7 +235,6 @@ class node{
         node_copy.setVal(this.getVal());
         node_copy.setAllEdges(this.getAllEdges());
         node_copy.setPosition(this.getPosition()[0],this.getPosition()[1])
-        console.log(node_copy.getPosition());
         return node_copy;
     }
 }
@@ -302,7 +291,6 @@ function draw_node(action){
     if(node1==null){
         return
     }
-    console.log(action)
 
     if(action=="new_node"){
         node1.setPositionCursor(window.mousex,window.mousey)
@@ -357,7 +345,6 @@ function create_node(tag){
         node1 = new node(id,did("node_size").value)
         did("node_grid").appendChild(node1.getDiv())
         node1.setPositionCursor(window.mousex,window.mousey)
-        console.log(node1)
         did("node_grid").setAttribute("onclick","setNode()");
         did("node_grid").setAttribute("onmousemove","draw_node('new_node')");
 
@@ -418,7 +405,6 @@ function createEdge(tag){
     else{
         let index1 = node1.getDiv().getAttribute("index")
         g.getNode(index1).createEdge(g.getNode(index));
-        console.log(g.getNode(index1));
         node1=null;
     }
 }
