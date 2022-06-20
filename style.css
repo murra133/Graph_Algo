@@ -1,4 +1,12 @@
-
+::selection {
+    color: none;
+    background: none;
+}
+/* For Mozilla Firefox */
+::-moz-selection {
+    color: none;
+    background: none;
+}
 body{
     overflow: scroll;
 }
@@ -749,18 +757,3 @@ i:hover{
 }
 
 
-/*Graph on Nodes*/
-.gn-select_node{
-    position: absolute;
-    background-color: transparent;
-}
-
-.gn-svg{
-    position: absolute;
-    z-index: -100;
-}
-
-path{
-
-    z-index: -90 ;
-}

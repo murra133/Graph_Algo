@@ -32,3 +32,93 @@
     opacity: 1;
     cursor:pointer;
 }
+
+/*Graph on Nodes*/
+.gn-select_node{
+    position: absolute;
+    background-color: white;
+    text-align: center;
+    font-size: 45px;
+}
+
+.gn-draggable:hover{
+    opacity: .7;
+    cursor:grab
+}
+.gn-dragging:hover{
+    cursor:grabbing
+}
+
+#edgeVal{
+    background-color: transparent;
+    z-index: -100;
+}
+
+path{
+
+    z-index: -90 ;
+}
+.path:hover{
+    cursor:crosshair;
+    opacity: 0.5;
+}
+
+.gn-valInput{
+    position: absolute;
+    width: 55px;
+    height: 30px;
+    transform-origin: center;
+    text-align: center;
+}
+
+.gn-action,#gn-action{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+
+}
+.gn-box{
+    border: black 1px solid;
+    border-radius: 5px;
+    padding: 10px;
+}
+.gn-box.active{
+    opacity: .6;
+}
+#gn-nodes,#gn-edges{
+    display: flex;
+    flex-direction: column;
+}
+
+.gn-delete:hover{
+    cursor:not-allowed;
+}
+.gn-start{
+    border-color: green;
+    color:green;
+
+}
+.gn-end{
+    border-color: red;
+    color:red;
+}
+
+.run-button.active{
+    color: rgb(246, 249, 251);
+    background-color: green;
+    border: green solid 2px;
+  }
+
+  .reset-button.active{
+    color: rgb(246, 249, 251);
+    background-color: red;
+    border: red solid 2px;
+  }
+
+  .gn-visit{
+      background-color: lightblue;
+  }
+  .gn-active{
+      background-color: orange;
+  }

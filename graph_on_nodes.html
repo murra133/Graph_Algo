@@ -16,40 +16,53 @@
 </head>
 <body>
     <div id="view_port">
-        <i class="fa-solid fa-angle-right" style="position:absolute; left:937.0960047213612px;top: 101.76968604761761px;z-index: 100;"></i>
         <div id="node_grid" onclick="setNode()" onmousemove="draw_node()"></div>
         <svg id="gn-svg">
-            <circle cx="500" cy="500" r="2"></circle>
         </svg>
-        <div id="arrow_head">
-
-        </div>
+        <!-- <span id="edgeVal"></span> -->
     <div id="settings" class="active" onclick="toggle_sidebar(this)">Settings</div>
     <div id ="sidebar" class="active">
         <h3 id="algo_title">Breadth First Search</h3>
         <div id="select_grid">
             <p>Select Node Size:<br><input onchange = "draw_grid()" id ="node_size" value="80" max="100" min="20" type="number" class = "grid"> px</p>
         </div>
-        <div id="select_type">
-            <p>Select Grid Type:<br></p>
-            <div id="type">
-                <i class="fa-solid fa-house start" id="start" onclick="create_node(this)"></i>
-                <i class="fa-solid fa-circle-minus stop" id="stop_sign" onclick="deleteNode(this)"></i>
-                <i class="fa-solid fa-tree slow" id="slow" onclick="create_edge(this)"></i>
-                <i class="fa-solid fa-location-pin location" id="location" onclick="select_type(this)"></i>
-                <i class="fa-solid fa-road merge" id="merge" onclick="select_type(this)"></i>
-            </div>     
+        
+        <div>
+            <h5 style="text-align:center">Create Graph:</h5>
+                <div id="gn-action">
+                <div id="gn-nodes">
+                <p>Add/Delete Node</p>
+                <div class="gn-action">
+                    <i class="fa-solid fa-plus gn-box" onclick="create_node(this)"></i>
+                    <i class="fa-solid fa-minus gn-box" onclick="deleteNode(this)"></i>
+                </div>
+            </div>
+                <div id="gn-edges">
+                    <p>Add/Delete Edge</p>
+                    <div class="gn-action">
+                        <i class="fa-solid fa-plus gn-box" onclick="create_edge(this)" ></i>
+                        <i class="fa-solid fa-minus gn-box" onclick="delete_edge(this)"></i>
+                    </div>
+                </div>
+
+            </div>
         </div>
         <div id="select_algo">
             <p>Select Algorithm:<br></p>
-            <select name="" id="" onchange="algo(this)">
+            <select onchange="algo(this)">
                 <option value="bfs">Breadth First Search</option>
                 <option value="dfs">Depth First Search</option>
                 <option value="dji">Dhikstra Algorithm</option>
-                <option value="dji2">Bi-Directional Dhikstra Algorithm</option>
-                <option value="astar">A* Algorithm</option>
-                <option value="best_algo">Auto Detect Best Algorithm</option>
+                <option value="prim">Prim's Algorithm</option>
+                <option value="krusk">Kruskal Algorithm</option>
             </select>
+        </div>
+        <div>
+            <h5 style="text-align:center">Choose Start and End:</h5>
+                <div class="gn-action">
+                    <button onclick="choose_start(this)" class="run-button start_end">Start</button>
+                    <button class="reset-button start_end" onclick="choose_end(this)">End</button>
+                </div>
         </div>
         <div id="stats">
             <h5>Stats:<br></h5>
@@ -73,7 +86,7 @@
               </label>
         </div>
         <div id = "buttons">
-            <button onclick="choose_algo('bfs')" class="run-button">Run</button>
+            <button onclick="choose_algo('bfs')" id = "run-button" class="run-button">Run</button>
             <button class="reset-button" onclick="reset()">Reset</button>
             <button class="clear-button" onclick="clear_()">Clear</button>
         </div>

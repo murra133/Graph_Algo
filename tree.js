@@ -1306,6 +1306,7 @@ function hp_insert(val){
         }
     }
     heapify_up(loc);
+    console.log("["+tree.join(",")+"]");
 }
 function hp_remove_min(){
     console.log("remove min")
