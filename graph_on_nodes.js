@@ -2,7 +2,19 @@
 class heap_{
 
     constructor(start_heap){
+        ///Start Heap is always an array within an array, values to compare are in the first position [[]]
         this.heap = start_heap;
+    }
+    hp_resize(){
+        let nhp = [];
+        let len = this.getLength()
+        for(let i = 0;i<this.heap.length;i++){
+            nhp.push(Array(len*2).fill(null));
+            for(let k=0;k<this.heap[i].length;k++){
+                nhp[i][k] = this.heap[i][k];
+            }
+            this.heap[i] = nhp[i];
+        }
     }
     get_parent(location){
         return Math.floor(location/2)
@@ -18,67 +30,93 @@ class heap_{
     child_defined(side,loc){
         //l = left, r= right;
         if(side=="l"){
-            if(this.heap[this.get_left_child(loc)]==null||this.heap[this.get_left_child(loc)]==undefined){
+            if(this.heap[0][this.get_left_child(loc)]==null||this.heap[0][this.get_left_child(loc)]==undefined){
                 return false;
             }
         }
         else{
-            if(this.heap[this.get_right_child(loc)]==null||this.heap[this.get_right_child(loc)]==undefined){
+            if(this.heap[0][this.get_right_child(loc)]==null||this.heap[0][this.get_right_child(loc)]==undefined){
                 return false;
             }
         }
         return true;
     }
-    getint(string){
+    getLength(){
+        return this.heap[0].length;
+    }
+    getint(loc){
         let val;
-        if(isNaN(parseFloat(string))){
-            val = string.charCodeAt(0)
+        if(isNaN(parseFloat(this.heap[0][loc]))){
+            val = this.heap[0][loc].charCodeAt(0)
         }
         else{
-            val = parseFloat(string)
+            val = parseFloat(this.heap[0][loc])
         }
         return val;
     }
     hp_insert(val){
         let loc = 0;
+        if(this.heap[0][this.getLength()-1]!=null){
+            console.log(this.heap);
+            this.hp_resize();
+            console.log(this.heap);
+        }
+
         for(let i=1;i<this.heap.length;i++){
-            if(this.heap[i]==null){
-                this.heap[i] = val;
+            if(this.heap[0][i]==null){
+                this.hp_copy_ins(i,null,val);
                 loc = i;
                 break
             }
         }
         this.heapify_up(loc);
     }
+    hp_copy_ins(loc,fin,val){
+        if(fin==null){
+            for(let i =0;i<this.heap.length;i++){
+                this.heap[i][loc] = val[i];
+            }
+        }
+        else{
+            for(let i=0;i<this.heap.length;i++){
+                let temp = this.heap[i][loc];
+                this.heap[i][loc]=this.heap[i][fin];
+                this.heap[i][fin]=temp;
+            }
+        }
+    }
 
     hp_remove(){
         let loc =0;
-        for(let i=1;i<this.heap.length;i++){
-            if(this.heap[i]==null){
+        for(let i=1;i<this.heap[0].length;i++){
+            if(this.heap[0][i]==null){
                 loc=i-1;
                 break;
             }
         }
-        let min = this.heap[1]
-        this.heap[1] = this.heap[loc];
-        this.heap[loc] = null;
+        this.hp_copy_ins(1,loc,null)
+        let min =[];
+        let n = Array(this.heap.length).fill(null);
+        for(let i=0;i<this.heap.length;i++){
+            min.push(this.heap[i][loc]);
+        }
+        this.hp_copy_ins(loc,null,n);
         this.heapify_down(1);
         return min;
     }
+    hp_peak(){
+        console.log(this.heap[0])
+        return this.heap[0][1]
+    }
     heapify_up(curr){
-        let parent = this.get_parent(curr)
-        console.log(this.heap)
-        while(this.getint(this.heap[parent])>this.getint(this.heap[curr])){
-            console.log(this.heap[curr])
-            let temp = this.heap[curr];
-            this.heap[curr] = this.heap[parent];
-            this.heap[parent]=temp;
+        let parent = this.get_parent(curr);
+        while(this.getint(parent)>this.getint(curr)&&parent>=1){
+            this.hp_copy_ins(curr,parent,null);
             curr = parent;
             parent = this.get_parent(curr)
             if(parent<1){
                 break;
             }
-            console.log(this.heap[parent])
         }
     
     }
@@ -87,28 +125,22 @@ class heap_{
             return;
         }
         let left;
-        let right;
-        let temp;
-      
+        let right;      
         while(this.child_defined("l",curr)&&this.child_defined("r",curr)){
             left = this.get_left_child(curr);
             right = this.get_right_child(curr); 
-            if(this.getint(this.heap[left])>this.getint(this.heap[curr])&&this.getint(this.heap[right])>this.getint(this.heap[curr])){
+            if(this.getint(left)>this.getint(curr)&&this.getint(right)>this.getint(curr)){
                 break;
             }
-            if(this.getint(this.heap[left])<this.getint(this.heap[right])){
-                if(this.getint(this.heap[curr])>this.getint(this.heap[left])){
-                    temp = this.heap[curr];
-                    this.heap[curr] = this.heap[left];
-                    this.heap[left] = temp;
+            if(this.getint(left)<this.getint(right)){
+                if(this.getint(curr)>this.getint(left)){
+                    this.hp_copy_ins(curr,left,null)
                     curr=left;
                 }
             }
             else{
-                if(this.getint(this.heap[curr])>this.getint(this.heap[right])){
-                    temp = this.heap[curr];
-                    this.heap[curr] = this.heap[right];
-                    this.heap[right] = temp;
+                if(this.getint(curr)>this.getint(right)){
+                    this.hp_copy_ins(curr,right,null);
                     curr=right;
                 }
             }
@@ -125,7 +157,7 @@ class graph{
         this.animation = [];
         this.grid=[];
         this.div = did("node_grid")
-        this.val = new heap_([-1, 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'M', 'N', 'L', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', null, null, null, null, null])
+        this.val = new heap_([[-1, 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'M', 'N', 'L', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', null, null, null, null, null]])
     }
 
     addNode(node1){
@@ -140,6 +172,7 @@ class graph{
     setStart(node){
         if(g.start!=null){
             g.start.getDiv().classList.remove("gn-start");
+            g.start.setDist("INF");
         }
         if(g.start==node){
             g.start=null;
@@ -147,6 +180,7 @@ class graph{
         else{
             g.start=node;
             g.start.getDiv().classList.add("gn-start")
+            g.start.setDist("0");
         }
     }
     getEnd(){
@@ -200,7 +234,6 @@ class graph{
             else{
                 let node = this.grid.shift()
                 let value = node.getVal();
-                console.log(value)
                 this.insertVal(value);
                 if(node==this.start){
                     this.start=null;
@@ -263,7 +296,6 @@ class graph{
         let edges;
         let adjacent;
         while(q.length>0){
-            console.log(visit_nodes)
             curr = q.shift();
             this.animation.push("a_"+curr.getId());
             this.animation.push("v_"+curr.getId());
@@ -294,32 +326,61 @@ class graph{
             return
         }
         let visit_nodes = Array(this.grid.length).fill(0);
-        let pq = new heap_();
+        let dist = Array(this.grid.length).fill(Infinity);
+        let parent = Array(this.grid.length).fill(-1);
+        dist[this.start.getIndex()] = 0;
+        let edges = this.start.getAllEdges();
+        let pq = new heap_([[-1],[-1]]);
+        for(let i=0;i<edges.length;i++){
+            let node2 = edges[i].getAdjacent();
+            if(dist[node2.getIndex()]>(dist[this.start.getIndex()]+edges[i].getVal())){
+                dist[node2.getIndex()]=(dist[this.start.getIndex()]+edges[i].getVal());
+                this.animation.push("v_"+node2.getId()+"_"+edges[i].getId());
+                pq.hp_insert([dist[node2.getIndex()],edges[i]]);
+                parent[node2.getIndex()]=this.start.getIndex();
+            }
+        }
+        pq.hp_peak();
+        let edge;
         let curr;
-        let edges;
-        let adjacent;
-        while(q.length>0){
-            console.log(visit_nodes)
-            curr = q.shift();
-            this.animation.push("a_"+curr.getId());
-            this.animation.push("v_"+curr.getId());
+        while(pq.hp_peak()!=null){
+            let v = pq.hp_remove();
+            edge = v[1];
+            curr = edge.getAdjacent();
+            console.log(curr)
+            if(visit_nodes[curr.getIndex()]==1){
+                continue;
+            }
+            this.animation.push("a_"+curr.getId()+"_"+edge.getId());
+            visit_nodes[curr.getIndex()]=1;
             if(curr==this.end){
                 break;
             }
+
             edges = curr.getAllEdges();
             for(let i=0;i<edges.length;i++){
-                adjacent = edges[i].getAdjacent();
-                if(visit_nodes[adjacent.getIndex()]==0){
-                    q.push(adjacent);
-                    visit_nodes[adjacent.getIndex()] = 1;
-
+                let node2 = edges[i].getAdjacent();
+                if(dist[node2.getIndex()]>(dist[curr.getIndex()]+edges[i].getVal())){
+                    dist[node2.getIndex()]=(dist[curr.getIndex()]+edges[i].getVal());
+                    pq.hp_insert([dist[node2.getIndex()],edges[i]]);
+                    parent[node2.getIndex()]=curr.getIndex();
+                    this.animation.push("v_"+node2.getId()+"_"+edges[i].getId());
                 }
             }
-            this.animation.push("da_"+curr.getId());
+            this.animation.push("da_"+curr.getId()+"_"+edge.getId());
         }
         if(curr!=this.end){
             this.animation.push("al_No Path has been found");
         }
+        else{
+            while(parent[curr.getIndex()]!=this.start.getIndex()){
+                let edge_id = (this.getNode(parent[curr.getIndex()])).getId()+"_"+curr.getId();
+                curr = this.getNode(parent[curr.getIndex()]);
+                this.animation.push("a_"+curr.getId()+"_"+edge_id);
+            }
+            this.animation.push("a_"+this.start.getId()+"_null");
+
+        }        
         this.animation.push("c_"+curr.getId());
 
     }
@@ -359,7 +420,6 @@ class edge{
             did("node_grid").appendChild(this.input)
 
         }
-        console.log(this.val)
         this.draw_edge()
     }
   
@@ -367,14 +427,16 @@ class edge{
         return this.id
     }
     getVal(){
-        return this.val;
+        return parseInt(this.val);
     }
     setVal(val){
         this.val = val;
-        console.log(this)
         if(this.backedge!=null&&this.backedge.getVal()!=this.val){
             this.backedge.setVal(val);
         }
+    }
+    getInitial(){
+        return this.node1;
     }
     getAdjacent(){
         return this.node2;
@@ -469,8 +531,6 @@ class edge{
             if(theta>Math.PI/2&&theta<3*Math.PI/2){
                 gamma = theta-Math.PI;
             }
-            console.log(theta);
-            console.log(gamma)
     
             yi = Math.abs(Ly-My)/2+Math.min(Ly,My)-14.5;
             xi = Math.abs(Lx-Mx)/2+Math.min(Lx,Mx)-22.5;
@@ -499,6 +559,12 @@ class node{
         this.div.id = id;
         this.div.setAttribute("index",this.index);
         this.div.innerHTML = value;
+        this.dist = document.createElement("p");
+        this.dist.className = "gn-dist gn-hidden";
+        this.dist.setAttribute("style","left:"+(node_size/2)+"px;top:"+(-node_size)+"px")
+        this.div.appendChild(this.dist);
+        this.dist.innerHTML = "INF";
+        
 
         this.posX = 0;
         this.posY = 0;
@@ -544,6 +610,14 @@ class node{
         }
         return false
     }
+
+    setDist(val){
+        this.div.children[0].classList.remove("gn-hidden");
+        this.div.children[0].innerHTML = val;
+    }
+    hideDist(){
+        this.div.children[0].classList.add("gn-hidden");
+    }
     ////Forward edges////
     createEdge(node2){
         if(this.isEdgeExist(this.id+"-"+node2.getId())!=false){
@@ -563,7 +637,6 @@ class node{
     deleteEdge(id){
         let edge = [];
         for(let e in this.edges){
-            console.log(this.edges[e])
             if(this.edges[e].getId()!=id){
                 edge.push(this.edges[e]);
             }
@@ -600,7 +673,8 @@ class node{
     }
 
     deleteNode(){
-        this.div.remove()
+        this.div.remove();
+        this.dist.remove();
         this.deleteAllEdges();
     }
     updateNode(id,node_size,index){
@@ -662,6 +736,15 @@ function algo(algo){
         }
     }
     did('algo_title').innerHTML = title
+    if(algo.value=="dji"){
+        let nodes = g.getAllNodes();
+        for(let i=0;i<nodes.length;i++){
+            nodes[i].setDist("INF");
+        }
+        if(g.getStart()!=null){
+            g.getStart().setDist(0);
+        }
+    }
 }
 
 
@@ -675,6 +758,10 @@ function choose_algo(algo){
     }
     else if(algo=="bfs"){
         g.bfs();
+        animate(0)
+    }
+    else if(algo=="dji"){
+        g.dji();
         animate(0)
     }
 
@@ -734,26 +821,37 @@ function animate(loc){
         * v_id = visit item with referenced id.
         * da_id = deactivate item with referenced id.
         * dv_id = devisit item with referenced id.
+        * sw_index_val = sets weight, pass in index of node and value
         */
 
         let action = g.getAnimation()[loc].split("_")[0];
         let id = g.getAnimation()[loc].split("_")[1];
+        let edge_id = g.getAnimation()[loc].split("_")[2]
 
         switch (action){
             case "a":
                 did(id).classList.add("gn-active");
+                did(edge_id).setAttribute("stroke","orange");
                 break;
             case "v":
                 did(id).classList.add("gn-visit");
+                did(edge_id).setAttribute("stroke","lightblue");
                 break;
             case "dv":
                 did(id).classList.remove("gn-visit");
+                did(edge_id).setAttribute("stroke","black");
                 break;
             case "da":
                 did(id).classList.remove("gn-active");
+                did(edge_id).setAttribute("stroke","lightblue");
                 break;
             case "al":
                 alert(id);
+                break;
+            case "sw":
+                let val = g.getAnimation()[loc].split("_")[2];
+                let node = g.getNode(parseInt(id))
+                node.setDist(val);
                 break;
             case "c":
                 g.clearAnimation();
@@ -818,8 +916,14 @@ function undo_all_types(){
     if(node1!=null){
         let value = node1.getVal()
         g.insertVal(value);
-        node1.deleteNode();
-        node1=null;
+        if(g.getNode(node1.getIndex())==node1){
+            node1=null;
+        }
+        else{
+            node1.deleteNode();
+            node1=null;
+        }
+
     };
     if(g.getStart()!=null){
         g.getStart().getDiv().classList.add("gn-start")
@@ -896,11 +1000,18 @@ function createEdge(tag){
     let index = tag.getAttribute("index");
     if(node1==null){
         node1=g.getNode(index);
+
     }
     else{
-        let index1 = node1.getDiv().getAttribute("index")
-        g.getNode(index1).createEdge(g.getNode(index));
-        node1=null;
+        if(node1==g.getNode(index)){
+            node1=null;
+        }
+        else{
+            let index1 = node1.getDiv().getAttribute("index")
+            g.getNode(index1).createEdge(g.getNode(index));
+            node1=g.getNode(index);
+        }
+
     }
 }
 
@@ -936,7 +1047,6 @@ function delete_edge(tag){
 
 function deleteEdge(index,id){
     let n1 = g.getNode(index);
-    console.log(n1)
     let edge = n1.isEdgeExist(id)
     if(edge){
         edge.deleteEdge();

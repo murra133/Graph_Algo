@@ -122,3 +122,11 @@ path{
   .gn-active{
       background-color: orange;
   }
+
+  .gn-dist{
+      position: relative;
+      font-size: 15px;
+  }
+  .gn-hidden{
+      display: none;
+  }
