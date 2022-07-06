@@ -57,12 +57,10 @@ class heap_{
     hp_insert(val){
         let loc = 0;
         if(this.heap[0][this.getLength()-1]!=null){
-            console.log(this.heap);
             this.hp_resize();
-            console.log(this.heap);
         }
 
-        for(let i=1;i<this.heap.length;i++){
+        for(let i=1;i<this.getLength();i++){
             if(this.heap[0][i]==null){
                 this.hp_copy_ins(i,null,val);
                 loc = i;
@@ -87,14 +85,15 @@ class heap_{
     }
 
     hp_remove(){
-        let loc =0;
-        for(let i=1;i<this.heap[0].length;i++){
+        let loc =this.getLength()-1;
+        for(let i=1;i<this.getLength();i++){
             if(this.heap[0][i]==null){
                 loc=i-1;
                 break;
             }
         }
-        this.hp_copy_ins(1,loc,null)
+
+        this.hp_copy_ins(1,loc,null);
         let min =[];
         let n = Array(this.heap.length).fill(null);
         for(let i=0;i<this.heap.length;i++){
@@ -105,7 +104,6 @@ class heap_{
         return min;
     }
     hp_peak(){
-        console.log(this.heap[0])
         return this.heap[0][1]
     }
     heapify_up(curr){
@@ -130,24 +128,21 @@ class heap_{
             left = this.get_left_child(curr);
             right = this.get_right_child(curr); 
             if(this.getint(left)>this.getint(curr)&&this.getint(right)>this.getint(curr)){
+                curr=this.getLength()-1;
                 break;
             }
-            if(this.getint(left)<this.getint(right)){
-                if(this.getint(curr)>this.getint(left)){
+            else{
+                if(this.getint(left)<this.getint(right)){
                     this.hp_copy_ins(curr,left,null)
                     curr=left;
                 }
-            }
-            else{
-                if(this.getint(curr)>this.getint(right)){
+                else{
                     this.hp_copy_ins(curr,right,null);
                     curr=right;
                 }
             }
         }
-    
     }
-
 }
 
 class graph{
@@ -202,7 +197,7 @@ class graph{
         return this.animation;
     }
     clearAnimation(){
-        g.animation = [];
+        this.animation = [];
     }
     getNewId(){
         return this.grid.length
@@ -246,6 +241,29 @@ class graph{
             i++;
         }
         this.grid = new_grid;
+    }
+
+    resetDist(action){
+        let nodes = this.getAllNodes();
+        for(let n in nodes){
+            if(action=="hide"){
+                nodes[n].hideDist();
+            }
+            else{
+                nodes[n].setDist("INF");
+            }
+        }
+        if(this.start!=null&&action!="hide"){
+            this.start.setDist(0);
+        }
+    }
+
+    clear(){
+        this.start = null;
+        this.end = null;
+        while(this.grid.length>0){
+            this.removeNode(0);
+        }
     }
 
 
@@ -336,18 +354,17 @@ class graph{
             if(dist[node2.getIndex()]>(dist[this.start.getIndex()]+edges[i].getVal())){
                 dist[node2.getIndex()]=(dist[this.start.getIndex()]+edges[i].getVal());
                 this.animation.push("v_"+node2.getId()+"_"+edges[i].getId());
+                this.animation.push("sw_"+node2.getIndex()+"_"+dist[node2.getIndex()]);
                 pq.hp_insert([dist[node2.getIndex()],edges[i]]);
                 parent[node2.getIndex()]=this.start.getIndex();
             }
         }
-        pq.hp_peak();
         let edge;
         let curr;
         while(pq.hp_peak()!=null){
             let v = pq.hp_remove();
             edge = v[1];
             curr = edge.getAdjacent();
-            console.log(curr)
             if(visit_nodes[curr.getIndex()]==1){
                 continue;
             }
@@ -365,6 +382,7 @@ class graph{
                     pq.hp_insert([dist[node2.getIndex()],edges[i]]);
                     parent[node2.getIndex()]=curr.getIndex();
                     this.animation.push("v_"+node2.getId()+"_"+edges[i].getId());
+                    this.animation.push("sw_"+node2.getIndex()+"_"+dist[node2.getIndex()]);
                 }
             }
             this.animation.push("da_"+curr.getId()+"_"+edge.getId());
@@ -374,15 +392,54 @@ class graph{
         }
         else{
             while(parent[curr.getIndex()]!=this.start.getIndex()){
-                let edge_id = (this.getNode(parent[curr.getIndex()])).getId()+"_"+curr.getId();
+                let edge_id = (this.getNode(parent[curr.getIndex()])).getId()+"-"+curr.getId();
                 curr = this.getNode(parent[curr.getIndex()]);
                 this.animation.push("a_"+curr.getId()+"_"+edge_id);
             }
-            this.animation.push("a_"+this.start.getId()+"_null");
+            let edge_id = (this.getNode(parent[curr.getIndex()])).getId()+"-"+curr.getId();
+            this.animation.push("a_"+this.start.getId()+"_"+edge_id);
 
         }        
         this.animation.push("c_"+curr.getId());
 
+
+    }
+
+
+    inSameSet(set,loc1,loc2){
+        let p1 = loc1;
+        let p2 = loc2;
+        while(set[p1]!=-1){
+            p1 = set[p1];
+        }
+        while(set[p2]!=-1){
+            p2 = set[p2];
+        }
+    }
+
+    prim(){
+        if(this.start==null){
+            alert("Please choose a start: ")
+            return;
+        }
+        let parent = Array(this.grid.length).fill(-1);
+        let pq = new heap_([[-1],[-1]]);
+        let edges = this.start.getAllEdges();
+        let dist = Array(this.grid.length).fill(0);
+        for(let i=0;i<edges.length;i++){
+            let node2 = edges[i].getAdjacent();
+            dist[node2.getIndex()]=(dist[this.start.getIndex()]+edges[i].getVal());
+            this.animation.push("v_"+node2.getId()+"_"+edges[i].getId());
+            this.animation.push("sw_"+node2.getIndex()+"_"+dist[node2.getIndex()]);
+            pq.hp_insert([dist[node2.getIndex()],edges[i]]);
+            parent[node2.getIndex()]=this.start.getIndex();
+        }
+        while(pq.hp_peak()!=null){
+            let v = pq.hp_remove();
+            edge = v[1];
+            curr = edge.getAdjacent();
+
+        }
     }
 
 
@@ -726,10 +783,28 @@ $(document).ready(function(){
     node1=null;
 })
 
+function reset_gn(){
+    undo_all_types();
+}
+function clear_gn(){
+    g.clear();
+}
 
 function algo(algo){
     did("run-button").setAttribute('onclick','choose_algo("'+algo.value+'")')
     let option = document.getElementsByTagName('option')
+    let svg = qsa("path");
+    let nodes = qsa(".gn-select_node");
+    svg.forEach(a=>{
+        a.removeAttribute("style");
+    })
+    nodes.forEach(n=>{
+        n.classList.remove("gn-node_opacity2")
+    })
+    let end = qsa(".start_end")[1];
+    let p = did("start_end_text");
+    p.innerHTML = "Choose Start and End"
+    end.removeAttribute("style");
     for(let i=0;i<option.length;i++){
         if(option[i].value==algo.value){
             var title = option[i].innerHTML
@@ -744,6 +819,17 @@ function algo(algo){
         if(g.getStart()!=null){
             g.getStart().setDist(0);
         }
+    }
+    else if(algo.value=="prim"||algo.value=="krusk"){
+        end.setAttribute("style","display:none");
+        p.innerHTML = "Choose Start"
+        g.resetDist();
+        svg.forEach(a=>{
+            a.setAttribute("style","opacity:0.2");
+        })
+        nodes.forEach(n=>{
+            n.classList.add("gn-node_opacity2")
+        })
     }
 }
 
@@ -827,23 +913,35 @@ function animate(loc){
         let action = g.getAnimation()[loc].split("_")[0];
         let id = g.getAnimation()[loc].split("_")[1];
         let edge_id = g.getAnimation()[loc].split("_")[2]
+        let e = 1;
+        if(did(edge_id)==null){
+            e=0;
+        }
 
         switch (action){
             case "a":
                 did(id).classList.add("gn-active");
-                did(edge_id).setAttribute("stroke","orange");
+                if(e){
+                    did(edge_id).setAttribute("stroke","orange");
+                }
                 break;
             case "v":
                 did(id).classList.add("gn-visit");
+                if(e){
                 did(edge_id).setAttribute("stroke","lightblue");
+                }
                 break;
             case "dv":
                 did(id).classList.remove("gn-visit");
+                if(e){
                 did(edge_id).setAttribute("stroke","black");
+                }
                 break;
             case "da":
                 did(id).classList.remove("gn-active");
+                if(e){
                 did(edge_id).setAttribute("stroke","lightblue");
+                }
                 break;
             case "al":
                 alert(id);
@@ -889,10 +987,21 @@ function setNode(){
 }
 
 function undo_all_types(){
+    g.clearAnimation();
+    if(did("algo").value=="bfs"||did("algo").value=="dfs"){
+        g.resetDist("hide");
+    }
+    else{
+        g.resetDist("set")
+    }
     let inputs = qsa(".gn-valInput");
     let nodes = g.getAllNodes();
     let types = qsa(".fa-solid");
     let buttons = qsa(".start_end");
+    let svg = qsa("path");
+    svg.forEach(a=>{
+        a.setAttribute("stroke","black")
+    })
     types.forEach(type=>{
         if(type.classList.contains("active")){
             type.classList.remove("active");
@@ -906,6 +1015,9 @@ function undo_all_types(){
     nodes.forEach(node_=>{
         node_.getDiv().removeAttribute("onclick");
         node_.setIndex(node_.getIndex());
+        if(did("algo").value=="prim"||did("algo").value=="krusk"){
+            node_.getDiv().classList.add("gn-node_opacity2")
+        }
 
     })
     inputs.forEach(i=>{
@@ -1013,10 +1125,6 @@ function createEdge(tag){
         }
 
     }
-}
-
-function see_graph(){
-    console.log(g);
 }
 
 function change_edge_value(index,id,tag){

@@ -90,7 +90,9 @@ path{
     display: flex;
     flex-direction: column;
 }
-
+.gn-node_opacity2{
+    opacity: .2;
+}
 .gn-delete:hover{
     cursor:not-allowed;
 }
