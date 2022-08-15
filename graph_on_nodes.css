@@ -99,6 +99,7 @@ path{
 .gn-start{
     border-color: green;
     color:green;
+    opacity: 1!important;
 
 }
 .gn-end{

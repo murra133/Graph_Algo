@@ -85,6 +85,10 @@ class heap_{
     }
 
     hp_remove(){
+        console.log(this.heap[0])
+        if(this.heap.length>1){
+            console.log(this.heap[1])
+        }
         let loc =this.getLength()-1;
         for(let i=1;i<this.getLength();i++){
             if(this.heap[0][i]==null){
@@ -108,7 +112,8 @@ class heap_{
     }
     heapify_up(curr){
         let parent = this.get_parent(curr);
-        while(this.getint(parent)>this.getint(curr)&&parent>=1){
+        this.heap[0]
+        while(parent>0&&this.getint(parent)>this.getint(curr)){
             this.hp_copy_ins(curr,parent,null);
             curr = parent;
             parent = this.get_parent(curr)
@@ -146,12 +151,12 @@ class heap_{
 }
 
 class graph{
-    constructor(){
+    constructor(div_id){
         this.start=null;
         this.end=null;
         this.animation = [];
         this.grid=[];
-        this.div = did("node_grid")
+        this.div = did(div_id)
         this.val = new heap_([[-1, 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'M', 'N', 'L', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', null, null, null, null, null]])
     }
 
@@ -364,6 +369,7 @@ class graph{
         while(pq.hp_peak()!=null){
             let v = pq.hp_remove();
             edge = v[1];
+            console.log(edge);
             curr = edge.getAdjacent();
             if(visit_nodes[curr.getIndex()]==1){
                 continue;
@@ -409,11 +415,27 @@ class graph{
     inSameSet(set,loc1,loc2){
         let p1 = loc1;
         let p2 = loc2;
+        let c1=0;
+        let c2=0;
         while(set[p1]!=-1){
             p1 = set[p1];
+            c1++;
         }
         while(set[p2]!=-1){
             p2 = set[p2];
+            c2++;
+        }
+        if(p2==p1){
+            return true;
+        }
+        else{
+            if(c1>c2){
+                set[p2] = p1;
+            }
+            else{
+                set[p1] = p2;
+            }
+            return set;
         }
     }
 
@@ -422,24 +444,127 @@ class graph{
             alert("Please choose a start: ")
             return;
         }
-        let parent = Array(this.grid.length).fill(-1);
+        let visited = Array(this.grid.length).fill(0);
+        visited[this.start.getIndex()] = 1;
         let pq = new heap_([[-1],[-1]]);
         let edges = this.start.getAllEdges();
         let dist = Array(this.grid.length).fill(0);
         for(let i=0;i<edges.length;i++){
             let node2 = edges[i].getAdjacent();
             dist[node2.getIndex()]=(dist[this.start.getIndex()]+edges[i].getVal());
-            this.animation.push("v_"+node2.getId()+"_"+edges[i].getId());
-            this.animation.push("sw_"+node2.getIndex()+"_"+dist[node2.getIndex()]);
-            pq.hp_insert([dist[node2.getIndex()],edges[i]]);
-            parent[node2.getIndex()]=this.start.getIndex();
+            pq.hp_insert([edges[i].getVal(),edges[i]]);
         }
+        let curr;
+        let edge;
         while(pq.hp_peak()!=null){
             let v = pq.hp_remove();
             edge = v[1];
             curr = edge.getAdjacent();
-
+            if(visited[curr.getIndex()]!=1){
+                visited[curr.getIndex()]=1;
+                this.animation.push("b_"+curr.getId()+"_"+edge.getId());
+                this.animation.push("sw_"+curr.getIndex()+"_"+dist[curr.getIndex()]);
+                edges = curr.getAllEdges();
+                for (let i=0;i<edges.length;i++){
+                    let node2 = edges[i].getAdjacent();
+                    dist[node2.getIndex()]=(dist[curr.getIndex()]+edges[i].getVal());
+                    pq.hp_insert([edges[i].getVal(),edges[i]]);
+                    
+                }
+            }
         }
+        this.animation.push("c_"+1);
+    }
+
+    krusk(){
+        let parent = Array(this.grid.length).fill(-1);
+        let pq = new heap_([[-1],[-1]]);
+        let nodes = this.getAllNodes();
+        for(let i in nodes){
+            let edges = nodes[i].getAllEdges();
+            for(let e in edges){
+                pq.hp_insert([edges[e].getVal(),edges[e]]);
+            }
+        }
+        let node1;
+        let node2;
+        let edge;
+        while(pq.hp_peak()!=null){
+            let v = pq.hp_remove();
+            edge = v[1];
+            node1 = edge.getInitial();
+            node2 = edge.getAdjacent();
+            let ss = this.inSameSet(parent,node1.getIndex(),node2.getIndex());
+            if(ss!=true){
+                parent = ss;
+                this.animation.push("bn_"+node1.getId());
+                this.animation.push("b_"+node2.getId()+"_"+edge.getId());
+            }
+        }
+        this.animation.push("c_1");
+    }
+    bellFord(){
+        if(this.start==null||this.end==null){
+            alert("Start or End has not been set");
+            return
+        }
+       let edges = [];
+       let i;
+       let visits = Array(this.grid.length).fill(0);
+       let parent = Array(this.grid.length).fill(-1);
+       let q = [this.start];
+       while(q.length>0){
+        let node = q.shift();
+        visits[node.getIndex()]=1;
+        let e = node.getAllEdges();
+        for(i in e){
+            edges.push(e[i]);
+            let node2 = e[i].getAdjacent();
+            if(visits[node2.getIndex()]==0){
+                q.push(node2);
+                visits[node2.getIndex()]=1;
+            }
+        }
+        }
+        let n =0;
+        let c =0;
+        let dist = Array(this.grid.length).fill(Infinity);
+        dist[this.start.getIndex()] = 0;
+        while(n<this.grid.length&&c==n){
+            for(i in edges){
+                let node1 = edges[i].getInitial();
+                this.animation.push("v_"+node1.getId())
+                let node2 = edges[i].getAdjacent();
+                this.animation.push("v_"+node2.getId()+"_"+edges[i].getId());
+                if((dist[node1.getIndex()]+edges[i].getVal())<dist[node2.getIndex()]){
+                    parent[node2.getIndex()] = node1.getIndex();
+                    dist[node2.getIndex()]=dist[node1.getIndex()]+edges[i].getVal();
+                    this.animation.push("sw_"+node2.getIndex()+"_"+dist[node2.getIndex()]);
+                    c=n+1;
+                }
+
+            }
+            this.animation.push("r_#_#");
+            n++;
+        }
+        if(c==n){
+            this.animation.push("al_Infinite Loop Found, No Solution");
+        }
+        else{
+            this.animation.pop();
+            let curr = this.end;
+            this.animation.push("a_"+this.end.getId()+"_+");
+            while(parent[curr.getIndex()]!=this.start.getIndex()){
+                let edge_id = (this.getNode(parent[curr.getIndex()])).getId()+"-"+curr.getId();
+                curr = this.getNode(parent[curr.getIndex()]);
+                this.animation.push("a_"+curr.getId()+"_"+edge_id);
+            }
+            let edge_id = (this.getNode(parent[curr.getIndex()])).getId()+"-"+curr.getId();
+            curr = this.getNode(parent[curr.getIndex()]);
+            this.animation.push("a_"+curr.getId()+"_"+edge_id);
+            this.animation.push("al_Solution Has Been Found");
+        }
+        this.animation.push("c_1");
     }
 
 
@@ -452,8 +577,7 @@ class edge{
         this.node1=node1;
         this.node2=node2;
         this.id = node1.getId()+"-"+node2.getId();
-        this.svg = document.createElementNS('http://www.w3.org/2000/svg',"path"); 
-        this.svg.setAttribute("stroke","black");
+         this.svg.setAttribute("stroke","black");
         this.svg.setAttribute("stroke-width","3");
         this.svg.setAttribute("fill","transparent");
         this.svg.id = this.id;
@@ -474,10 +598,14 @@ class edge{
             this.input.className = "gn-valInput"
             this.input.setAttribute("oninput","change_edge_value("+this.node1.getIndex()+",'"+this.id+"',this)");
             this.input.id = "i_"+this.id;
-            did("node_grid").appendChild(this.input)
+            if(did("node_grid")!=undefined){
+                did("node_grid").appendChild(this.input)
+            }
 
         }
-        this.draw_edge()
+        if(node1!=node2){
+            this.draw_edge()
+        }
     }
   
     getId(){
@@ -497,6 +625,12 @@ class edge{
     }
     getAdjacent(){
         return this.node2;
+    }
+    setInitial(node1){
+        this.node1 = node1;
+    }
+    setAdjacent(node2){
+        this.node2 = node2;
     }
     deleteEdge(){
         if(this.backedge!=null){
@@ -530,6 +664,67 @@ class edge{
         return this.backedge;
     }
 
+    draw_edge_cursor(x2,y2){
+        let x1 = this.node1.getPosition()[0]+this.node1.getNodeSize()/2;
+        let y1 = this.node1.getPosition()[1]+this.node1.getNodeSize()/2-10;
+        let theta;
+        let arrl = 20;
+        let yi;
+        let xi;
+
+        if(y1>y2){
+            theta = Math.atan((y1-y2)/(x1-x2));
+            if(x1>x2){
+                theta = Math.PI-theta;
+            }
+            else{
+                theta = theta*-1
+                // theta = Math.atan((y1-y2)/(x2-x1));
+            }
+            if (theta<0){
+                theta = theta+Math.PI*2;
+            }
+            var alpha1 = theta - Math.PI/6+Math.PI*2;
+            var alpha2 = alpha1 + Math.PI/3;
+
+        }
+        else{
+            theta = Math.atan((y2-y1)/(x1-x2))+Math.PI;
+            if(x1>x2){
+
+            }
+            else{
+                theta = Math.atan((y2-y1)/(x1-x2));
+                // theta = Math.atan((y2-y1)/(x2-x1));
+            }
+            if (theta<0){
+                theta = theta+Math.PI*2;
+            }
+            var alpha1 = theta - 7*Math.PI/6+Math.PI;
+            var alpha2 = alpha1 + Math.PI/3;
+        }
+
+        let Mx = (x1+this.node1.getNodeSize()/2*Math.cos(-theta))
+        let My = (y1+this.node1.getNodeSize()/2*Math.sin(-theta));
+        let Lx = (x2)
+        let Ly = (y2)
+        let arrow = "L"+(Lx-Math.cos(alpha1)*(arrl))+" "+(Ly-Math.sin(alpha1)*(-1*arrl))+" M"+Lx +" "+Ly+"L"+(Lx-Math.cos(alpha2)*(arrl))+" "+(Ly-Math.sin(alpha2)*(-1*arrl))
+
+        this.svg.setAttribute("d","M"+Mx+" "+My+", L"+Lx+" "+Ly+" "+arrow);
+
+        ///Draw Input///
+        if(this.input!=null){
+            let gamma = theta;
+            if(theta>Math.PI/2&&theta<3*Math.PI/2){
+                gamma = theta-Math.PI;
+            }
+    
+            yi = Math.abs(Ly-My)/2+Math.min(Ly,My)-14.5;
+            xi = Math.abs(Lx-Mx)/2+Math.min(Lx,Mx)-22.5;
+            this.input.setAttribute("style","left:"+xi+"px;top:"+yi+"px; transform: rotateZ("+(gamma*-1)+"rad)")
+            this.input.value = this.getVal();
+        }
+    }
     draw_edge(){
 
         ////Draw SVG///
@@ -621,8 +816,6 @@ class node{
         this.dist.setAttribute("style","left:"+(node_size/2)+"px;top:"+(-node_size)+"px")
         this.div.appendChild(this.dist);
         this.dist.innerHTML = "INF";
-        
-
         this.posX = 0;
         this.posY = 0;
         // this.circle = document.createElementNS('http://www.w3.org/2000/svg',"circle");
@@ -774,12 +967,15 @@ class node{
 
 
 $(document).ready(function(){
+    if(did("main_body")!=undefined){
+        return
+    }
     let height = window.innerHeight;
     let width = window.innerWidth;
     did("node_grid").setAttribute("style","position:absolute;height:"+height+"px;width:"+width+"px")
     did("gn-svg").setAttribute("style","height:"+height+"px;width:"+width+"px");
     // did("edgeVal").setAttribute("style","position:absolute;height:"+height+"px;width:"+width+"px")
-    g = new graph();
+    g = new graph("node_grid");
     node1=null;
 })
 
@@ -801,17 +997,18 @@ function algo(algo){
     nodes.forEach(n=>{
         n.classList.remove("gn-node_opacity2")
     })
-    let end = qsa(".start_end")[1];
+    let se = qsa(".start_end"); 
     let p = did("start_end_text");
     p.innerHTML = "Choose Start and End"
-    end.removeAttribute("style");
+    se[0].removeAttribute("style");
+    se[1].removeAttribute("style");
     for(let i=0;i<option.length;i++){
         if(option[i].value==algo.value){
             var title = option[i].innerHTML
         }
     }
     did('algo_title').innerHTML = title
-    if(algo.value=="dji"){
+    if(algo.value=="dji"||algo.value=="bf"){
         let nodes = g.getAllNodes();
         for(let i=0;i<nodes.length;i++){
             nodes[i].setDist("INF");
@@ -821,8 +1018,13 @@ function algo(algo){
         }
     }
     else if(algo.value=="prim"||algo.value=="krusk"){
-        end.setAttribute("style","display:none");
+        se[1].setAttribute("style","display:none");
         p.innerHTML = "Choose Start"
+        if(algo.value=="krusk"){
+            p.innerHTML = "";
+            se[0].setAttribute("style","display:none");
+
+        }
         g.resetDist();
         svg.forEach(a=>{
             a.setAttribute("style","opacity:0.2");
@@ -840,16 +1042,25 @@ function choose_algo(algo){
     let time = (new Date).getTime()
     if (algo == 'dfs'){
         g.dfs();
-        animate(0);
     }
     else if(algo=="bfs"){
         g.bfs();
-        animate(0)
     }
     else if(algo=="dji"){
         g.dji();
-        animate(0)
     }
+    else if(algo=="prim"){
+        g.prim();
+    }
+    else if(algo=="krusk"){
+        g.krusk();
+    }
+    else if(algo=="bf"){
+        console.log("RUNNING")
+        g.bellFord();
+    }
+    animate(0);
+
 
 }
 
@@ -951,8 +1162,18 @@ function animate(loc){
                 let node = g.getNode(parseInt(id))
                 node.setDist(val);
                 break;
+            case "b":
+                did(id).classList.remove("gn-node_opacity2");
+                did(edge_id).removeAttribute("style")
+                break;
+            case "bn":
+                did(id).classList.remove("gn-node_opacity2");
+                break;
             case "c":
                 g.clearAnimation();
+                break;
+            case "r":
+                reset_styles_only();
                 break;
         }
 
@@ -984,6 +1205,19 @@ function setNode(){
     node1 = new node(id,did("node_size").value,value)
     did("node_grid").appendChild(node1.getDiv())
     node1.setPositionCursor(window.mousex,window.mousey)
+}
+
+function reset_styles_only(){
+    let nodes = g.getAllNodes();
+    let svg = qsa("path");
+    svg.forEach(a=>{
+        a.setAttribute("stroke","black")
+    })
+    nodes.forEach(node_=>{
+        let div = node_.getDiv();
+        div.classList.remove("gn-visit");
+        div.classList.remove("gn-active")
+    });
 }
 
 function undo_all_types(){
@@ -1037,6 +1271,11 @@ function undo_all_types(){
         }
 
     };
+
+    if(edge1!=null){
+        edge1.deleteEdge();
+        edge1 = null;
+    }
     if(g.getStart()!=null){
         g.getStart().getDiv().classList.add("gn-start")
     }
@@ -1096,7 +1335,7 @@ function create_edge(tag){
             node_.getDiv().classList.remove("gn-draggable");
 
         })
-        did("node_grid").setAttribute("onmousemove","draw_node('new_edge')");
+        did("node_grid").setAttribute("onmousemove","drawEdge()");
         did("node_grid").setAttribute("index","drawEdge");
 
     }
@@ -1106,27 +1345,43 @@ function create_edge(tag){
 
 //////////////////////////////////////////////////////////////////
 
-
+edge1 = null;
 
 function createEdge(tag){
     let index = tag.getAttribute("index");
     if(node1==null){
         node1=g.getNode(index);
+        edge1 = new edge(node1,node1);
+
 
     }
     else{
         if(node1==g.getNode(index)){
             node1=null;
+            edge1.deleteEdge();
+            edge1 = null;
         }
         else{
             let index1 = node1.getDiv().getAttribute("index")
             g.getNode(index1).createEdge(g.getNode(index));
             node1=g.getNode(index);
+            edge1.setInitial(node1);
+            edge1.setAdjacent(node1);
+            this.draw_edge_cursor(window.mousex,window.mousey)
         }
 
     }
 }
 
+function drawEdge(){
+    if(edge1==null){
+        return;
+    }
+    else{
+        edge1.draw_edge_cursor(window.mousex,window.mousey)
+    }
+
+}
 function change_edge_value(index,id,tag){
     let node = g.getNode(index);
     let edge = node.isEdgeExist(id);

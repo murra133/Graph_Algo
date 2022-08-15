@@ -1,0 +1,139 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Hash Map</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="hashMap.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <script src="https://kit.fontawesome.com/38a84518ea.js" crossorigin="anonymous"></script> 
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="script.js"></script>
+    <script src="hashMap.js"></script>
+</head>
+<body onscroll="update_SVG()" onresize="update_SVG()">
+    <div id="view_port" onscroll="update_SVG()" onresize="update_SVG()">
+        <!-- <span id="edgeVal"></span> -->
+        <svg id="hm-svg">
+        </svg>
+    <div id="settings2"  class="inactive" onclick="toggle_sidebar(this)">Settings</div>
+    <div id ="sidebar" class="inactive">
+        <h3 id="algo_title">Hash Map</h3>        
+        <div class="setting_column" style="row-gap: 0px;">
+            <h5 style="text-align:center">Hash Map Parameters</h5>
+            <div class="setting_row">
+                <p>Initial Capacity:</p>
+                <input type="number" id = "hm-ic" value = "5" oninput="hash_param('ic',this)">
+            </div>
+            <div class="setting_row">
+                <p>Load Factor:</p>
+                <input type="number" min = "0.1" step="0.1" id = "hm-lf" value="1.1" oninput="hash_param('lf',this)">
+            </div>
+            <div class="setting_row">
+                <p>Growth Factor:</p>
+                <input type="number" id = "hm-gf" value="2" oninput="hash_param('gf',this)">
+            </div>
+            <div class="setting_row">
+                <p>Collision Handling</p> 
+                <select id="hm-handle" oninput="hash_param('hh',this)">
+                    <option value="ll">Linked List</option>
+                    <option value="adj">Adjacent Open Space</option>
+                </select>
+            </div>
+            <div class="setting_row">
+                <p>Hash Quantities:</p> 
+                <select id="hm-quantities" oninput="hash_param('hq',this)">
+                    <option value="1">Hash Once</option>
+                    <option value="2">Hash Twice</option>
+                </select>
+            </div>
+            </div>
+            <div class="setting_column">
+                <p>Select Hashing Function:</p>
+                <div class="hs-tag_compiled">
+                    <div class="hs-tag active" onclick="choose_hash_function(this)">1</div>
+                    <div class="hs-tag" onclick="choose_hash_function(this)">2</div>
+                    <div class="hs-tag" onclick="choose_hash_function(this)">3</div>
+                    <div class="hs-tag" onclick="choose_hash_function(this)">4</div>
+                    <div class="hs-tag" onclick="choose_hash_function(this)">5</div>
+                    <div class="hs-tag" onclick="choose_hash_function(this)">6</div>
+                    <div class="hs-tag" onclick="choose_hash_function(this)">7</div>
+                </div>
+                <div class="hs-function">
+                    Function hash(input){<br>
+                        int size = sizeof(hashMap);<br>
+                        if(typeof(input)!="int"){<br>
+                            return char values%size;<br>
+                        }<br>
+                        return input%size;<br>
+                    }
+                </div>
+            </div>
+            <div>
+                Actions:<br>
+                <select id="algo" onchange="select_algo(this)">
+                    <option id="hm-iv" value = "iv">Insert Value</option>
+                    <option id="hm-fv" value = "fv">Find Value</option>
+                    <option id="hm-dv" value = "dv">Delete Value</option>
+                    <option id="hm-rv" value = "rv">Rehash Values</option>
+                </select> 
+                <input type="text" id="input_value">
+            </div>
+            <button onclick="run_algo('iv')" id = "run-button" class="run-button">Run</button>
+
+    </div>
+    <div id="action-log">
+
+    </div>
+
+    <diV id ="sidebarleft">
+        <div class="sidebarleft_50">
+            <h5>Action Log:</h5>
+            <div id="action_log">
+
+            </div>
+        </div>
+        <div id="inputs" class="sidebarleft_auto">
+            <h5>Function:</h5>
+            <p>Insert</p>
+            <p>Input: 5</p>
+        </div>
+        <div id ="Parameters" class="sidebarleft_auto">
+            <h5>HashMap Parameters:</h5>
+            <p >Capacity: <p class="param_val" id = "param-c">5</p></p><br>
+            <p >Load Factor: <p class="param_val" id = "param-lf">1.1</p></p><br>
+            <p >Current load: <p class="param_val" id = "param-cl">0</p></p><br>
+            <p>Current Load Factor: <p class="param_val" id = "param-clf">0</p></p><br>
+        </div>
+        <div class="sidebarleft_auto">
+            <h5>Controls:</h5>
+            <div id="visual_toggle">
+                <p>Do you want the Algorithm to be Visual?</p>
+                <label class="switch">
+                    <input onclick="speed_instant(this)" type="checkbox">
+                    <span class="slider round"></span>
+                  </label>
+                  <label class="speed">
+                      <input oninput="speed_change(this)" type ="range" id="speed" min="20" max="200" value="100">
+                      <p id="speed_val">100ms</p>
+                  </label>
+            </div>
+            <div id = "buttons">
+                <button class="reset-button" onclick="reset_hm()">Reset</button>
+                <button class="clear-button" onclick="clear_gn()">Clear</button>
+            </div>
+        </div>
+    </diV>
+
+</body>
+<footer>
+    <script>
+        window.addEventListener('mousemove',function(e){
+            window.mousey = e.clientY;
+            window.mousex = e.clientX;
+        });
+    </script>
+</footer>

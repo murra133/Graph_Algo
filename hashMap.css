@@ -1,0 +1,121 @@
+.hs-function{
+      width: 350px;
+      height: 200px;
+      background-color: white;
+      border: gray 1px solid;
+      border-radius: 0px 0px 10px 10px ;
+      z-index: 0;
+      box-shadow: 0px 1px 0px 0px gray;
+}
+
+.hs-tag{
+width: 48px;
+height: 40px;
+margin:0px;
+background-color: rgb(220,220,220);
+border-bottom: 0px!important;
+border: gray 1px solid;
+border-radius: 10px 10px 0px 0px;
+position: relative;
+top:11px;
+z-index:0;
+text-align: center;
+font-size:x-large;
+}
+.hs-tag:hover{
+    transform:scale(1.15);
+    background-color:white;
+    cursor:pointer;
+
+}
+.hs-tag.active{
+    z-index: 1;
+    background-color: white;
+}
+/* .hs-tag.active::after{
+    content: "";
+    position: absolute;
+    background-color: black;
+    width: 5px;
+    height: 5px;
+    top: 35px;
+    border-radius: 50%;
+    border: 1px solid gray;
+} */
+
+.hs-tag_compiled{
+    display: flex;
+    flex-direction: row;
+    row-gap: 0;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    left:7px;
+}
+#view_port{
+    width: 100%;
+}
+#HashMap{
+    display: flex;
+    flex-direction: column;
+    row-gap: 15px; 
+    width: 70%;
+    position: relative;
+    float: right;
+    left: 10%;
+    z-index: -1;
+}
+.hm-linked_list{
+    display: flex;
+    width: 100%;
+    flex-direction: row;
+    justify-content: left;
+    column-gap: 50px;
+    align-items: center;
+}
+.hm-node,.hm-head{
+    text-align: center;
+    font-size: large;
+    width: 140px;
+    height: 70px;
+    border: solid black 1px;
+    border-radius: 5px;
+}
+.hm-node::before{
+    content: "";
+    border: 1px solid black;
+    border-top: 0px;
+    border-left: 0px;
+    border-bottom: 0px;
+    height: 100%;
+    width: 20%;
+    position: relative;
+    float: left;
+}
+
+.hm-node::after,.hm-head::after{
+    content: "";
+    border: 1px solid black;
+    border-top: 0px;
+    border-right: 0px;
+    border-bottom: 0px;
+    height: 100%;
+    width: 20%;
+    position: relative;
+    float: right;
+
+}
+
+#hm-svg{
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    z-index: -2;
+}
+
+.hm-active{
+    background-color: orange;
+}
+.hm-visit{
+    background-color: lightblue;
+}

@@ -16,6 +16,9 @@ function toggle_sidebar(button){
         document.getElementById('sidebar').setAttribute('class',"inactive")
     }
 }
+function toggle_sidebar2(button){
+    
+}
 
 function did(id){
     /// quick way to get and element by id

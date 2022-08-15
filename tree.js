@@ -1293,6 +1293,7 @@ function draw_hb_node(id,HTML){
 
 /////////////////////////////////
 function hp_insert(val){
+    console.log(tree)
     let loc = 0;
     for(let i=1;i<tree.length;i++){
         if(tree[i]==null){

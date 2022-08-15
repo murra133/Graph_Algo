@@ -1,16 +1,8 @@
+
+
 animate = [];
 function animate_tile(tile){
     if(tile=="graph"){
-        animate = [[],[]];
-        let algo =Math.floor(Math.random() * 2);
-        if(algo == 0){
-            animate = bfs("1_1","1_1","4_5",animate);
-        }
-        else{
-            animate = dfs("1_1","4_5",animate);
-        }
-        animate_visit(animate,0,0)
-        animate = []
     }
     if(tile=="sort"){
         sort_array = [4,7,3,8,2,1,6];
@@ -25,6 +17,20 @@ function animate_tile(tile){
         animation_array = []
     }
 }
+
+function animate_graph(){
+    animate = [[],[]];
+    let algo =Math.floor(Math.random() * 2);
+    if(algo == 0){
+        animate = bfs("1_1","1_1","4_5",animate);
+    }
+    else{
+        animate = dfs("1_1","4_5",animate);
+    }
+    animate_visit(animate,0,0)
+    animate = []
+}
+
 
 function deanimate_tile(tile){
     if(tile=="graph"){
@@ -172,3 +178,5 @@ function a_sort(action_array,start){
             a_sort(action_array,start+1)
         },10)
     }
+
+

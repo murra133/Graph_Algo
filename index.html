@@ -6,6 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Graphs</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="graph_on_nodes.css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <script src="https://kit.fontawesome.com/38a84518ea.js" crossorigin="anonymous"></script> 
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
@@ -14,6 +15,8 @@
     <script src="main.js"></script>
     <script src="sort.js"></script>
     <script src="tree.js"></script>
+    <script src="graph_on_nodes.js"></script>
+
 
 </head>
 <body id="main_body" onresize="draw_edge()">
@@ -22,10 +25,10 @@
         VisualAlgo
     </h1>
     <br>
-    <p>Last Updated:6/19/22</p>
+    <p>Last Updated:7/10/22</p>
 </header>
 <div id="tile_body" >
-    <a class="tile clickable" href="graph.html" onmouseleave="deanimate_tile('graph')" onmouseenter="animate_tile('graph')">
+    <a class="tile clickable" href="graph.html" onmouseleave="deanimate_tile('graph')" onmouseenter="animate_graph()">
         <div class="tile_view" id="tile_grid">
             <div id="ygrid" value = "4"></div>
             <div id = "xgrid" value = "5"></div>
@@ -97,13 +100,34 @@
             </div>
         </div>
         <h3 class="tile_title">Binary Tree<br>Data Structures</h3>
-    </a>
+    </a> 
     <a  class="tile clickable" href="graph_on_nodes.html" >
-        <div class="tile_view">
-            <i class="fa-solid fa-person-digging"></i>
+        <div class="tile_view" id="graph_on_nodes">
+            <div id>
+                <div class="main-select_node" id="0"></div>
+            </div>
+            <div>
+                <div class="main-select_node" id="1"></div>
+                <div class="main-select_node" id="2"></div>
+                <div class="main-select_node" id="3"></div>
+            </div>
+            <div>
+                <div class="main-select_node" id="4"></div>
+                <div class="main-select_node" id="5"></div>
+            </div>
+            <div>
+                <div class="main-select_node" id="6"></div>
+                <div class="main-select_node" id="7"></div>
+            </div>
         </div>
+        <svg id = "gn-svg" style="position:absolute"></svg>
         <h3 class="tile_title">Graph Algorithms<br>on Nodes</h3>
     </a>
+        <a  class="tile clickable" href="hashMap.html" >
+            <div class="tile_view"></div>
+
+            <h3 class="tile_title">Hash Maps</h3>
+        </a>
 
 </div>
 
@@ -111,5 +135,30 @@
 <script>
     tree = [-1,1,null,1,null,null,1,null]
     draw_edge();
+    const node1 = new node("1",20,"");
+    const node2 = new node("2",20,"");
+    const node3 = new node("3",20,"");
+    const node4 = new node("4",20,"");
+    const node5 = new node("5",20,"");
+    const node6 = new node("6",20,"");
+    const node7 = new node("7",20,"");
+    const node8 = new node("8",20,"");
+    const g = new graph("graph_on_nodes");
+
+    g.addNode(node1);
+    g.addNode(node2);
+    g.addNode(node3);
+    g.addNode(node4);
+    g.addNode(node5);
+    g.addNode(node6);
+    g.addNode(node7);
+    g.addNode(node8);
+    let nodes = g.getAllNodes();
+    for(let i in nodes){
+        nodes[i].getDiv().remove();
+        nodes[i].setDiv(did(i))
+        let rect = (nodes[i].getDiv()).getBoundingClientRect();
+        nodes[i].setPosition(parseInt(rect.left),parseInt(rect.top))
+    }
 </script>
 </html>
